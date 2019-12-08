@@ -1,0 +1,123 @@
+# ----------- User configutaion ------------------
+substitutions:
+  devicename: watercontrol
+  upper_devicename: Watercontrol
+  pin_cold: D8
+  init_cold: '251.18'
+  pin_hot: D7
+  init_hot: '121.75'
+  water_open_pin: D4
+  water_close_pin: D3
+# ----------- /User configutaion ------------------
+
+# Need to turn off logging because senseair uses uart and have conflicts with logging
+logger:
+
+esphome:
+  name: $devicename
+  platform: ESP8266
+  board: d1_mini
+
+wifi:
+  ssid: !secret wifi_24_name
+  password: !secret wifi_24_pass
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "$upper_devicename Fallback Hotspot"
+    password: !secret esphome_captive_pass
+
+captive_portal:
+
+# Enable Home Assistant API
+api:
+  password: !secret esphome_pass
+
+ota:
+  password: !secret esphome_pass
+
+globals:
+ - id: water_state
+   type: bool
+   restore_value: yes
+   initial_value: 'true'
+ - id: counter_cold_value
+   type: float
+   restore_value: yes
+   initial_value: $init_cold
+ - id: counter_hot_value
+   type: float
+   restore_value: yes
+   initial_value: $init_hot
+
+binary_sensor:
+  - platform: gpio
+    name: pulse_cold
+    pin: 
+      number: $pin_cold
+      mode: INPUT_PULLUP
+    filters:
+      - delayed_off: 100ms
+    on_press:
+      then:
+        - lambda: 'id(counter_cold_value) += 0.01;'
+  
+  - platform: gpio
+    name: pulse_hot
+    pin: 
+      number: $pin_hot
+      mode: INPUT_PULLUP
+    filters:
+      - delayed_off: 100ms
+    on_press:
+      then:
+        - lambda: 'id(counter_hot_value) += 0.01;'
+
+sensor:
+  - platform: uptime
+    name: "$upper_devicename Uptime"
+  
+  - platform: template
+    name: "counter_hot"
+    accuracy_decimals: 2
+    lambda: |-
+      return id(counter_hot_value);
+    update_interval: 60s
+  
+  - platform: template
+    name: "counter_cold"
+    accuracy_decimals: 2
+    lambda: |-
+      return id(counter_cold_value);
+    update_interval: 60s
+
+switch:
+  - platform: gpio
+    pin: 
+      number: $water_open_pin
+      inverted: yes
+    id: water_open
+
+  - platform: gpio
+    pin: 
+      number: $water_close_pin
+      inverted: yes
+    id: water_close
+  
+  - platform: template
+    name: "Water valve"
+    icon: "mdi:cup-water"
+    lambda: |-
+      return id(water_state);
+    turn_on_action:
+      - switch.turn_on: water_close
+      - switch.turn_on: water_open
+      - delay: 5s
+      - switch.turn_off: water_close
+      - switch.turn_off: water_open
+      - lambda: 'id(water_state) = true;'
+    turn_off_action:
+      - switch.turn_on: water_close
+      - delay: 5s
+      - switch.turn_off: water_close
+      - lambda: 'id(water_state) = false;'

@@ -1,0 +1,57 @@
+version: '3'
+services:
+  # mosquitto:
+  #   image: "monster1025/alpine86-mosquitto:latest"
+  #   container_name: mosquitto
+  #   env_file: ./mosquitto/settings/mqtt.env
+  #   ports:
+  #     - "1883:1883"
+  #   restart: always
+  #   logging:
+  #     driver: json-file
+  #     options:
+  #       max-size: 50m 
+
+  hass:
+    image: homeassistant/home-assistant:latest #0.100.3
+    container_name: hass
+    volumes:
+      - ./hass/settings:/config
+      #- ./hass/settings/hosts.txt:/etc/hosts:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "8123:8123"
+      - "9898:9898/udp"
+      - "4321:4321/udp"
+      - "51827:51827" #Homekit
+    #depends_on:
+    #  - mysql
+    #  - mosquitto
+    #  - broadlink
+    network_mode: "host"
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8123"]
+      interval: 30s
+      timeout: 10s
+      retries: 6
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m
+
+  esphome:
+    image: esphome/esphome-armv7
+    container_name: esphome
+    ports:
+      - "6052:6052"
+    volumes:
+      - ./esphome/settings:/config
+      - ./hass/settings/secrets.yaml:/config/secrets.yaml:ro
+    network_mode: "host"
+    logging:
+      driver: json-file
+      options:
+          max-size: "10m"
+          max-file: "5"
+#
