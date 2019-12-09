@@ -1,0 +1,26 @@
+logs:
+  main_log:
+    filename: STDOUT
+
+appdaemon:
+  # threads: 10
+  latitude: !secret home_latitude
+  longitude: !secret home_longitude
+  elevation: 0
+  time_zone: !secret timezone
+  # api_port: 5000
+  # api_key: !secret ha_password
+  # narodmon_key: !secret narodmon_key
+
+  plugins:
+    HASS:
+      type: hass
+      ha_url: !secret ha_url
+      ha_key: !secret ha_password
+      token: !secret ha_token
+
+http:
+  url: !secret ha_url
+admin:
+api:
+hadashboard:

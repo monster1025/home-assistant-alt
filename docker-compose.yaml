@@ -39,6 +39,26 @@ services:
       driver: json-file
       options:
         max-size: 50m
+        
+  appdaemon:
+    build:
+      context: ./appdaemon/docker
+    container_name: appdaemon
+    depends_on:
+      - hass
+    volumes:
+      - ./appdaemon/settings:/conf
+      - ./hass/settings/secrets.yaml:/conf/secrets.yaml:ro
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
+    links:
+      - "hass"
+    logging:
+      driver: json-file
+      options:
+          max-size: "10m"
+          max-file: "5"
+
 
   esphome:
     image: esphome/esphome-armv7
@@ -54,4 +74,3 @@ services:
       options:
           max-size: "10m"
           max-file: "5"
-#

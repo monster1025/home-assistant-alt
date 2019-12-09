@@ -1,0 +1,18 @@
+uptime:
+  module: groups
+  class: Groups
+  friendly_name: Аптайм
+  device_type: sensor
+  entity_part: "uptime_"
+
+control_tags:
+  module: groups
+  class: Groups
+  device_type: input_boolean
+  entity_part: "tag_"
+
+sensor_tags:
+  module: groups
+  class: Groups
+  device_type: sensor
+  entity_part: "tag_"
