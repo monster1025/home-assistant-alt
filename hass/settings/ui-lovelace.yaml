@@ -13,113 +13,113 @@ views:
         entities:
           - alarm_control_panel.ha_alarm
           - switch.water_valve
-          - vacuum.xiaomi_vacuum_cleaner
-          - switch.domofon_force_open
-          - switch.wifi_socket
-      - type: entities
-        title: "Гостиная"
-        show_header_toggle: false
-        entities:
-          - sensor.temperature_158d0001149b3c
-          - sensor.humidity_158d0001149b3c
-          - sensor.xiaomi_airpurifier_air_quality_pm25
-          - sensor.senseair_co2_value
-          - light.yeelight_color1_34ce008fe328
-          - light.yeelight_color1_286c071065c7
-          - light.yeelight_mono1_34ce0087ff33
-          - light.yeelight_mono1_f0b4290e5444
-          - light.yeelight_mono1_f0b429a8f6df
-          - light.salt_lamp
-          - cover.curtain_158d0002b0c46a
-          - switch.plug_158d0001104a0c
-          - switch.plug_158d00010dd98d
-          - fan.xiaomi_miio_device
-          - climate.living_room
-      - type: entities
-        title: "Кухня"
-        show_header_toggle: false
-        entities:
-          - light.kitchen
-          - light.kitchen_mini_light
-          - switch.plug_158d0001a68b18
-          - switch.plug_158d0001a68c64
-          - switch.plug_158d0001a4cfb4
-          - switch.plug_158d00020f3a29
-          - switch.plug_158d0002924779
-          - switch.xiaomi_miio_switch
-      - type: entities
-        title: "Ванная"
-        show_header_toggle: false
-        entities:
-          - sensor.temperature_158d00012d9ad7
-          - sensor.humidity_158d00012d9ad7
-          - light.bath
-          - light.philips_led
-          - sensor.airfresher_remain
-      - type: entities
-        title: "Прихожая"
-        show_header_toggle: false
-        entities:
-          - light.hall
-      - type: entities
-        title: "Балкон"
-        show_header_toggle: false
-        entities:
-          - light.yeelight_mono1_286c07f12bed
-          - light.yeelight_mono1_f0b429a8d936
-          - sensor.temperature_158d000117d37a
-          - sensor.humidity_158d000117d37a
-          - switch.plug_158d00026ea017
-      - type: entities
-        title: "Улица"
-        show_header_toggle: false
-        entities:
-          - sensor.temperature_158d000149c128
-          - sensor.humidity_158d000149c128
+          # - vacuum.xiaomi_vacuum_cleaner
+          # - switch.domofon_force_open
+          # - switch.wifi_socket
+      # - type: entities
+      #   title: "Гостиная"
+      #   show_header_toggle: false
+      #   entities:
+      #     - sensor.temperature_158d0001149b3c
+      #     - sensor.humidity_158d0001149b3c
+      #     - sensor.xiaomi_airpurifier_air_quality_pm25
+      #     - sensor.senseair_co2_value
+      #     - light.yeelight_color1_34ce008fe328
+      #     - light.yeelight_color1_286c071065c7
+      #     - light.yeelight_mono1_34ce0087ff33
+      #     - light.yeelight_mono1_f0b4290e5444
+      #     - light.yeelight_mono1_f0b429a8f6df
+      #     - light.salt_lamp
+      #     - cover.curtain_158d0002b0c46a
+      #     - switch.plug_158d0001104a0c
+      #     - switch.plug_158d00010dd98d
+      #     - fan.xiaomi_miio_device
+      #     - climate.living_room
+      # - type: entities
+      #   title: "Кухня"
+      #   show_header_toggle: false
+      #   entities:
+      #     - light.kitchen
+      #     - light.kitchen_mini_light
+      #     - switch.plug_158d0001a68b18
+      #     - switch.plug_158d0001a68c64
+      #     - switch.plug_158d0001a4cfb4
+      #     - switch.plug_158d00020f3a29
+      #     - switch.plug_158d0002924779
+      #     - switch.xiaomi_miio_switch
+      # - type: entities
+      #   title: "Ванная"
+      #   show_header_toggle: false
+      #   entities:
+      #     - sensor.temperature_158d00012d9ad7
+      #     - sensor.humidity_158d00012d9ad7
+      #     - light.bath
+      #     - light.philips_led
+      #     - sensor.airfresher_remain
+      # - type: entities
+      #   title: "Прихожая"
+      #   show_header_toggle: false
+      #   entities:
+      #     - light.hall
+      # - type: entities
+      #   title: "Балкон"
+      #   show_header_toggle: false
+      #   entities:
+      #     - light.yeelight_mono1_286c07f12bed
+      #     - light.yeelight_mono1_f0b429a8d936
+      #     - sensor.temperature_158d000117d37a
+      #     - sensor.humidity_158d000117d37a
+      #     - switch.plug_158d00026ea017
+      # - type: entities
+      #   title: "Улица"
+      #   show_header_toggle: false
+      #   entities:
+      #     - sensor.temperature_158d000149c128
+      #     - sensor.humidity_158d000149c128
   - title: "Датчики"
     icon: mdi:nfc
     cards:
-      - type: entities
-        title: "Движение"
-        show_header_toggle: false
-        entities:
-          - binary_sensor.motion_sensor_158d0000e7c7ad
-          - binary_sensor.motion_sensor_158d0002044548
-          - binary_sensor.motion_sensor_158d0000fbc664
-          - binary_sensor.motion_sensor_158d0001535c97
-          - binary_sensor.motion_sensor_158d0000f9546b
-          - binary_sensor.motion_sensor_158d000165fed5
-          - binary_sensor.motion_sensor_158d0001537e21
-          - binary_sensor.motion_sensor_158d0000f6b2fa
-          - binary_sensor.motion_sensor_158d0001e50ce4
-          - binary_sensor.motion_sensor_158d0001e80f0d
-      - type: entities
-        title: "Протечка"
-        show_header_toggle: false
-        entities:
-          - binary_sensor.water_leak_sensor_158d0001d594fa
-          - binary_sensor.water_leak_sensor_158d0001c34960
-          - binary_sensor.water_leak_sensor_158d0002150c07
-          - binary_sensor.water_leak_sensor_158d0002112b98
-          - binary_sensor.water_leak_sensor_158d0002113158
-          - binary_sensor.water_leak_sensor_158d00023a48f0
-      - type: entities
-        title: "Датчики дыма"
-        show_header_toggle: false
-        entities:
-          - binary_sensor.smoke_sensor_158d00023115ad
-      - type: entities
-        title: "Двери"
-        show_header_toggle: false
-        entities:
-          - binary_sensor.door_window_sensor_158d0001130141
-          - binary_sensor.door_window_sensor_158d000111a469
-          - binary_sensor.door_window_sensor_158d00010f7e19
-          - binary_sensor.door_window_sensor_158d0002254373
-          - binary_sensor.door_window_sensor_158d0001b77b1b
-          - binary_sensor.door_window_sensor_158d0001c0e46d
-          - binary_sensor.door_window_sensor_158d0001e74660
-          - binary_sensor.door_window_sensor_158d0001b711ec
+      # - type: entities
+      #   title: "Движение"
+      #   show_header_toggle: false
+  #       entities:
+  #         - binary_sensor.motion_sensor_158d0000e7c7ad
+  #         - binary_sensor.motion_sensor_158d0002044548
+  #         - binary_sensor.motion_sensor_158d0000fbc664
+  #         - binary_sensor.motion_sensor_158d0001535c97
+  #         - binary_sensor.motion_sensor_158d0000f9546b
+  #         - binary_sensor.motion_sensor_158d000165fed5
+  #         - binary_sensor.motion_sensor_158d0001537e21
+  #         - binary_sensor.motion_sensor_158d0000f6b2fa
+  #         - binary_sensor.motion_sensor_158d0001e50ce4
+  #         - binary_sensor.motion_sensor_158d0001e80f0d
+  #     - type: entities
+  #       title: "Протечка"
+  #       show_header_toggle: false
+  #       entities:
+  #         - binary_sensor.water_leak_sensor_158d0001d594fa
+  #         - binary_sensor.water_leak_sensor_158d0001c34960
+  #         - binary_sensor.water_leak_sensor_158d0002150c07
+  #         - binary_sensor.water_leak_sensor_158d0002112b98
+  #         - binary_sensor.water_leak_sensor_158d0002113158
+  #         - binary_sensor.water_leak_sensor_158d00023a48f0
+  #     - type: entities
+  #       title: "Датчики дыма"
+  #       show_header_toggle: false
+  #       entities:
+  #         - binary_sensor.smoke_sensor_158d00023115ad
+  #     - type: entities
+  #       title: "Двери"
+  #       show_header_toggle: false
+  #       entities:
+  #         - binary_sensor.door_window_sensor_158d0001130141
+  #         - binary_sensor.door_window_sensor_158d000111a469
+  #         - binary_sensor.door_window_sensor_158d00010f7e19
+  #         - binary_sensor.door_window_sensor_158d0002254373
+  #         - binary_sensor.door_window_sensor_158d0001b77b1b
+  #         - binary_sensor.door_window_sensor_158d0001c0e46d
+  #         - binary_sensor.door_window_sensor_158d0001e74660
+  #         - binary_sensor.door_window_sensor_158d0001b711ec
       - type: entities
         title: "Счетчики воды"
         show_header_toggle: false
@@ -160,239 +160,239 @@ views:
           - sensor.power_active_power
           - sensor.power_reactive_power
           - sensor.power_power_factor
-  - title: "Камеры"
-    icon: mdi:cctv
-    cards:
-      - type: picture-entity
-        title: entrance
-        entity: camera.entrance
-        camera_image: camera.entrance
-        show_info: true
-        tap_action: dialog
-      - type: entities
-        title: "Электропитание"
-        show_header_toggle: false
-        entities:
-          - media_player.mpd
-  - title: "Будильники"
-    icon: mdi:alarm
-    cards:
-      - type: entities
-        title: "Будильник (бу\
-          дни)"
-        show_header_toggle: false
-        entities:
-          - input_boolean.alarmclock_weekdays
-          - input_datetime.alarmclock_weekdays
-      - type: entities
-        title: "Будильник (вы\
-          ходные)"
-        show_header_toggle: false
-        entities:
-          - input_boolean.alarmclock_weekend
-          - input_datetime.alarmclock_weekend
-  - title: "Статистика"
-    icon: mdi:chart-areaspline
-    cards:
-      - type: entities
-        title: "Электроэнергия"
-        show_header_toggle: false
-        entities:
-          - sensor.power_hourly
-          - sensor.power_daily
-          - sensor.power_monthly
-          - sensor.power_money_hourly
-          - sensor.power_money_daily
-          - sensor.power_money_monthly
-      - type: entities
-        title: "Горячая вода"
-        show_header_toggle: false
-        entities:
-          - sensor.counter_hot_hourly
-          - sensor.counter_hot_daily
-          - sensor.counter_hot_monthly
-          - sensor.counter_hot_money_hourly
-          - sensor.counter_hot_money_daily
-          - sensor.counter_hot_money_monthly
-      - type: entities
-        title: "Холодная вода"
-        show_header_toggle: false
-        entities:
-          - sensor.counter_cold_hourly
-          - sensor.counter_cold_daily
-          - sensor.counter_cold_monthly
-          - sensor.counter_cold_money_hourly
-          - sensor.counter_cold_money_daily
-          - sensor.counter_cold_money_monthly
-      - type: entities
-        title: "Посудомойка"
-        show_header_toggle: false
-        entities:
-          - sensor.dishwasher_hourly
-          - sensor.dishwasher_daily
-          - sensor.dishwasher_monthly
-          - sensor.dishwasher_money_hourly
-          - sensor.dishwasher_money_daily
-          - sensor.dishwasher_money_monthly
-      - type: entities
-        title: "Стиралка"
-        show_header_toggle: false
-        entities:
-          - sensor.washer_hourly
-          - sensor.washer_daily
-          - sensor.washer_monthly
-          - sensor.washer_money_hourly
-          - sensor.washer_money_daily
-          - sensor.washer_money_monthly
-      - type: entities
-        title: "Телевизор"
-        show_header_toggle: false
-        entities:
-          - sensor.tv_hourly
-          - sensor.tv_daily
-          - sensor.tv_monthly
-          - sensor.tv_money_hourly
-          - sensor.tv_money_daily
-          - sensor.tv_money_monthly
-      - type: entities
-        title: "Термопот"
-        show_header_toggle: false
-        entities:
-          - sensor.thermopot_hourly2
-          - sensor.thermopot_daily2
-          - sensor.thermopot_monthly2
-          - sensor.thermopot_money_hourly
-          - sensor.thermopot_money_daily
-          - sensor.thermopot_money_monthly
-      - type: entities
-        title: "Кондиционер"
-        show_header_toggle: false
-        entities:
-          - sensor.conditioner_hourly
-          - sensor.conditioner_daily
-          - sensor.conditioner_monthly
-          - sensor.conditioner_money_hourly
-          - sensor.conditioner_money_daily
-          - sensor.conditioner_money_monthly
-      - type: entities
-        title: "Холодильник"
-        show_header_toggle: false
-        entities:
-          - sensor.fridge_hourly
-          - sensor.fridge_daily
-          - sensor.fridge_monthly
-          - sensor.fridge_money_hourly
-          - sensor.fridge_money_daily
-          - sensor.fridge_money_monthly
-      - type: entities
-        title: "Фитолампа"
-        show_header_toggle: false
-        entities:
-          - sensor.fitolamp_hourly
-          - sensor.fitolamp_daily
-          - sensor.fitolamp_monthly
-          - sensor.fitolamp_money_hourly
-          - sensor.fitolamp_money_daily
-          - sensor.fitolamp_money_monthly
-      - type: entities
-        title: "Сервер"
-        show_header_toggle: false
-        entities:
-          - sensor.server_hourly
-          - sensor.server_daily
-          - sensor.server_monthly
-          - sensor.server_money_hourly
-          - sensor.server_money_daily
-          - sensor.server_money_monthly
-      - type: entities
-        title: "Теория трехтарифника"
-        show_header_toggle: false
-        entities:
-          - utility_meter.power_theory
-          - sensor.power_theory_t1
-          - sensor.power_theory_t2
-          - sensor.power_theory_t3
-          - sensor.power_money_t1_monthly
-          - sensor.power_money_t2_monthly
-          - sensor.power_money_t3_monthly
-          - sensor.power_theory_money_monthly
-      - type: history-graph
-        title: Качество воздуха
-        hours_to_show: 80
-        refresh_interval: 60
-        entities:
-          - sensor.xiaomi_airpurifier_air_quality_pm25
-          - sensor.senseair_co2_value
-  - title: "Настройки"
-    icon: mdi:settings
-    cards:
-      - type: entities
-        title: "Контроль све\
-          та"
-        show_header_toggle: true
-        entities:
-          - input_boolean.mainroom_light_control
-          - input_boolean.hall_light_control
-          - input_boolean.bath_light_control
-          - input_boolean.kitchen_light_control
-          - input_boolean.balcony_light_control
-      - type: entities
-        title: "Настройки ав\
-          томатики"
-        show_header_toggle: true
-        entities:
-          - input_boolean.presence_control
-          - input_boolean.water_control
-          - input_boolean.water_leak_control
-          - input_boolean.mainroom_climate_control
-          - switch.domofon_automatically_open
-          - switch.domofon_automatically_open_once
-      - type: entities
-        title: "Настройки отчетов"
-        show_header_toggle: true
-        entities:
-          - input_boolean.security_sensors_report
-          - input_boolean.battery_report
-          - input_boolean.water_counters_report
-          - input_boolean.work_presence_report
-          - input_boolean.lock_report
-          - input_boolean.balance_report
-      - type: entities
-        title: "Метки"
-        show_header_toggle: true
-        entities:
-          - input_boolean.tag_mamik_band
-          - input_boolean.tag_monster_nut
-          - input_boolean.tag_nut_blue
-          - input_boolean.tag_nut_white
-          - input_boolean.tag_nut_guest
-      - type: entities
-        title: "Аптайм"
-        show_header_toggle: false
-        entities:
-          - sensor.airfresher_uptime
-          - sensor.watercontrol_uptime
-          - sensor.domofon_uptime
-          - sensor.uptime_kitchen_led
-          - sensor.uptime_nest
-          - sensor.uptime_bathlight
-          - sensor.uptime_kitchen
-  - title: "Информация"
-    icon: mdi:monitor-multiple
-    cards:
-      - type: entities
-        title: "ОС"
-        show_header_toggle: false
-        entities:
-          - sensor.processor_use
-          - sensor.memory_free
-          - sensor.swap_use_percent
-          - sensor.disk_use_percent
-          - sensor.ssl_certificate_expiry_2
-      - type: entities
-        title: "Сеть"
-        show_header_toggle: false
-        entities:
-          - sensor.speedtest_ping
-          - sensor.speedtest_download
-          - sensor.speedtest_upload
+  # - title: "Камеры"
+  #   icon: mdi:cctv
+  #   cards:
+  #     - type: picture-entity
+  #       title: entrance
+  #       entity: camera.entrance
+  #       camera_image: camera.entrance
+  #       show_info: true
+  #       tap_action: dialog
+  #     - type: entities
+  #       title: "Электропитание"
+  #       show_header_toggle: false
+  #       entities:
+  #         - media_player.mpd
+  # - title: "Будильники"
+  #   icon: mdi:alarm
+  #   cards:
+  #     - type: entities
+  #       title: "Будильник (бу\
+  #         дни)"
+  #       show_header_toggle: false
+  #       entities:
+  #         - input_boolean.alarmclock_weekdays
+  #         - input_datetime.alarmclock_weekdays
+  #     - type: entities
+  #       title: "Будильник (вы\
+  #         ходные)"
+  #       show_header_toggle: false
+  #       entities:
+  #         - input_boolean.alarmclock_weekend
+  #         - input_datetime.alarmclock_weekend
+  # - title: "Статистика"
+  #   icon: mdi:chart-areaspline
+  #   cards:
+  #     - type: entities
+  #       title: "Электроэнергия"
+  #       show_header_toggle: false
+  #       entities:
+  #         - sensor.power_hourly
+  #         - sensor.power_daily
+  #         - sensor.power_monthly
+  #         - sensor.power_money_hourly
+  #         - sensor.power_money_daily
+  #         - sensor.power_money_monthly
+  #     - type: entities
+  #       title: "Горячая вода"
+  #       show_header_toggle: false
+  #       entities:
+  #         - sensor.counter_hot_hourly
+  #         - sensor.counter_hot_daily
+  #         - sensor.counter_hot_monthly
+  #         - sensor.counter_hot_money_hourly
+  #         - sensor.counter_hot_money_daily
+  #         - sensor.counter_hot_money_monthly
+  #     - type: entities
+  #       title: "Холодная вода"
+  #       show_header_toggle: false
+  #       entities:
+  #         - sensor.counter_cold_hourly
+  #         - sensor.counter_cold_daily
+  #         - sensor.counter_cold_monthly
+  #         - sensor.counter_cold_money_hourly
+  #         - sensor.counter_cold_money_daily
+  #         - sensor.counter_cold_money_monthly
+  #     - type: entities
+  #       title: "Посудомойка"
+  #       show_header_toggle: false
+  #       entities:
+  #         - sensor.dishwasher_hourly
+  #         - sensor.dishwasher_daily
+  #         - sensor.dishwasher_monthly
+  #         - sensor.dishwasher_money_hourly
+  #         - sensor.dishwasher_money_daily
+  #         - sensor.dishwasher_money_monthly
+  #     - type: entities
+  #       title: "Стиралка"
+  #       show_header_toggle: false
+  #       entities:
+  #         - sensor.washer_hourly
+  #         - sensor.washer_daily
+  #         - sensor.washer_monthly
+  #         - sensor.washer_money_hourly
+  #         - sensor.washer_money_daily
+  #         - sensor.washer_money_monthly
+  #     - type: entities
+  #       title: "Телевизор"
+  #       show_header_toggle: false
+  #       entities:
+  #         - sensor.tv_hourly
+  #         - sensor.tv_daily
+  #         - sensor.tv_monthly
+  #         - sensor.tv_money_hourly
+  #         - sensor.tv_money_daily
+  #         - sensor.tv_money_monthly
+  #     - type: entities
+  #       title: "Термопот"
+  #       show_header_toggle: false
+  #       entities:
+  #         - sensor.thermopot_hourly2
+  #         - sensor.thermopot_daily2
+  #         - sensor.thermopot_monthly2
+  #         - sensor.thermopot_money_hourly
+  #         - sensor.thermopot_money_daily
+  #         - sensor.thermopot_money_monthly
+  #     - type: entities
+  #       title: "Кондиционер"
+  #       show_header_toggle: false
+  #       entities:
+  #         - sensor.conditioner_hourly
+  #         - sensor.conditioner_daily
+  #         - sensor.conditioner_monthly
+  #         - sensor.conditioner_money_hourly
+  #         - sensor.conditioner_money_daily
+  #         - sensor.conditioner_money_monthly
+  #     - type: entities
+  #       title: "Холодильник"
+  #       show_header_toggle: false
+  #       entities:
+  #         - sensor.fridge_hourly
+  #         - sensor.fridge_daily
+  #         - sensor.fridge_monthly
+  #         - sensor.fridge_money_hourly
+  #         - sensor.fridge_money_daily
+  #         - sensor.fridge_money_monthly
+  #     - type: entities
+  #       title: "Фитолампа"
+  #       show_header_toggle: false
+  #       entities:
+  #         - sensor.fitolamp_hourly
+  #         - sensor.fitolamp_daily
+  #         - sensor.fitolamp_monthly
+  #         - sensor.fitolamp_money_hourly
+  #         - sensor.fitolamp_money_daily
+  #         - sensor.fitolamp_money_monthly
+  #     - type: entities
+  #       title: "Сервер"
+  #       show_header_toggle: false
+  #       entities:
+  #         - sensor.server_hourly
+  #         - sensor.server_daily
+  #         - sensor.server_monthly
+  #         - sensor.server_money_hourly
+  #         - sensor.server_money_daily
+  #         - sensor.server_money_monthly
+  #     - type: entities
+  #       title: "Теория трехтарифника"
+  #       show_header_toggle: false
+  #       entities:
+  #         - utility_meter.power_theory
+  #         - sensor.power_theory_t1
+  #         - sensor.power_theory_t2
+  #         - sensor.power_theory_t3
+  #         - sensor.power_money_t1_monthly
+  #         - sensor.power_money_t2_monthly
+  #         - sensor.power_money_t3_monthly
+  #         - sensor.power_theory_money_monthly
+  #     - type: history-graph
+  #       title: Качество воздуха
+  #       hours_to_show: 80
+  #       refresh_interval: 60
+  #       entities:
+  #         - sensor.xiaomi_airpurifier_air_quality_pm25
+  #         - sensor.senseair_co2_value
+  # - title: "Настройки"
+  #   icon: mdi:settings
+  #   cards:
+  #     - type: entities
+  #       title: "Контроль све\
+  #         та"
+  #       show_header_toggle: true
+  #       entities:
+  #         - input_boolean.mainroom_light_control
+  #         - input_boolean.hall_light_control
+  #         - input_boolean.bath_light_control
+  #         - input_boolean.kitchen_light_control
+  #         - input_boolean.balcony_light_control
+  #     - type: entities
+  #       title: "Настройки ав\
+  #         томатики"
+  #       show_header_toggle: true
+  #       entities:
+  #         - input_boolean.presence_control
+  #         - input_boolean.water_control
+  #         - input_boolean.water_leak_control
+  #         - input_boolean.mainroom_climate_control
+  #         - switch.domofon_automatically_open
+  #         - switch.domofon_automatically_open_once
+  #     - type: entities
+  #       title: "Настройки отчетов"
+  #       show_header_toggle: true
+  #       entities:
+  #         - input_boolean.security_sensors_report
+  #         - input_boolean.battery_report
+  #         - input_boolean.water_counters_report
+  #         - input_boolean.work_presence_report
+  #         - input_boolean.lock_report
+  #         - input_boolean.balance_report
+  #     - type: entities
+  #       title: "Метки"
+  #       show_header_toggle: true
+  #       entities:
+  #         - input_boolean.tag_mamik_band
+  #         - input_boolean.tag_monster_nut
+  #         - input_boolean.tag_nut_blue
+  #         - input_boolean.tag_nut_white
+  #         - input_boolean.tag_nut_guest
+  #     - type: entities
+  #       title: "Аптайм"
+  #       show_header_toggle: false
+  #       entities:
+  #         - sensor.airfresher_uptime
+  #         - sensor.watercontrol_uptime
+  #         - sensor.domofon_uptime
+  #         - sensor.uptime_kitchen_led
+  #         - sensor.uptime_nest
+  #         - sensor.uptime_bathlight
+  #         - sensor.uptime_kitchen
+  # - title: "Информация"
+  #   icon: mdi:monitor-multiple
+  #   cards:
+  #     - type: entities
+  #       title: "ОС"
+  #       show_header_toggle: false
+  #       entities:
+  #         - sensor.processor_use
+  #         - sensor.memory_free
+  #         - sensor.swap_use_percent
+  #         - sensor.disk_use_percent
+  #         - sensor.ssl_certificate_expiry_2
+  #     - type: entities
+  #       title: "Сеть"
+  #       show_header_toggle: false
+  #       entities:
+  #         - sensor.speedtest_ping
+  #         - sensor.speedtest_download
+  #         - sensor.speedtest_upload
