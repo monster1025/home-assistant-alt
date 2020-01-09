@@ -1,0 +1,33 @@
+#ignore all hidden files
+.*
+!.travis.yml
+
+*.conf
+!nginx/settings/site-confs/*.conf
+*.log
+*.db
+*.db-*
+
+#ignore env files with auth.data
+*.env
+*.pickle
+
+hass/settings/entity_registry.yaml
+hass/settings/secrets.yaml
+hass/settings/deps/*
+hass/settings/backup/*
+hass/settings/tts/*
+hass/settings/www/*
+
+appdaemon/settings/namespaces/*
+
+zigbee2mqtt/settings/configuration.yaml
+zigbee2mqtt/settings/state.json
+zigbee2mqtt/settings/database.db
+zigbee2mqtt/settings/log/*
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
