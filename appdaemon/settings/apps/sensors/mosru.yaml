@@ -10,7 +10,7 @@ mosru_client:
     pwd: !secret mosru_pwd
     token: !secret mosru_token
     paycode: !secret mosru_paycode
-    # flat_id: !secret mosru_flat_id
+    flat_id: !secret mosru_flat_id
   global_dependencies:
     - globals
 

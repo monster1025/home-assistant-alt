@@ -11,6 +11,13 @@ services:
   #     driver: json-file
   #     options:
   #       max-size: 50m 
+  home:
+   #image: monster1025/yandex-ddns
+   build: ./ddns/docker
+   env_file: ./ddns/settings/token.env
+   environment:
+     - SUBDOMAIN="home-alt"
+   restart: always
 
   hass:
     image: homeassistant/home-assistant:latest #0.100.3
