@@ -1,0 +1,3 @@
+[submodule "ddns/docker"]
+	path = ddns/docker
+	url = https://github.com/monster1025/yandex-ddns
