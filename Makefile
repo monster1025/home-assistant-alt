@@ -37,6 +37,7 @@ copy_secrets:
 	git add .
 	git diff-index --quiet HEAD || git commit -m "secrets update"
 	git push
+	cd ..
 
 commit: copy_secrets update_secrets_sample
 	git add .
