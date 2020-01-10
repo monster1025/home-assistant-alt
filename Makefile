@@ -2,10 +2,6 @@
 
 ARGS = `arg="$(filter-out $@,$(MAKECMDGOALS))" && echo $${arg:-${1}}`
 
-lint:
-	@echo "Checking python syntax with pyflakes"
-	@pyflakes appdaemon
-
 update_secrets_sample:
 	@echo "Masking passwords..."
 	#hass
