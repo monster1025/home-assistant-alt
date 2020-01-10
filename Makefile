@@ -38,9 +38,9 @@ copy_secrets:
 	@echo "Copying secrets"
 	@cp hass/settings/secrets.yaml secrets/hass-alt/settings/secrets.yaml
 	@cd secrets
-	@git add .
-	@git diff-index --quiet HEAD || git commit -m "secrets update"
-	@git push
+	git add .
+	git diff-index --quiet HEAD || git commit -m "secrets update"
+	git push
 
 commit: copy_secrets update_secrets_sample
 	git add .
