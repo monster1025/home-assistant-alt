@@ -34,9 +34,17 @@ update_secrets_sample:
 
 #	@cat zigbee2mqtt/settings/configuration.yaml | sed "s/\:.*/\: xxxxxxxxx/g" > zigbee2mqtt/settings/configuration.yaml.sample #mask passwords
 
-commit: update_secrets_sample
+copy_secrets:
+	@echo "Copying secrets"
+	@cp hass/settings/secrets.yaml secrets/hass-alt/settings/secrets.yaml
+	@cd secrets
+	@git add .
+	@git diff-index --quiet HEAD || git commit -m "secrets update"
+	@git push
+
+commit: copy_secrets update_secrets_sample
 	git add .
-	git commit -m "$(call ARGS,\"updating configuration\")"
+	git diff-index --quiet HEAD || git commit -m "$(call ARGS,\"updating configuration\")"
 	git push
 
 %:
