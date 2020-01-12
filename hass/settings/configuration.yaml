@@ -69,7 +69,7 @@ notify: !include_dir_merge_list configuration/notify
 # mqtt: !include configuration/mqtt/mqtt.yaml
 telegram_bot: !include configuration/bot/telegram_bot.yaml
 # vacuum: !include configuration/xiaomi_aqara/vacuum.yaml
-# xiaomi_aqara: !include configuration/xiaomi_aqara/xiaomi_aqara.yaml
+xiaomi_aqara: !include configuration/xiaomi_aqara/xiaomi_aqara.yaml
 # nest: !include configuration/nest/nest.yaml
 # homekit: !include configuration/homekit/homekit.yaml
 
