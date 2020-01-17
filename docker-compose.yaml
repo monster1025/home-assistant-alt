@@ -1,16 +1,18 @@
 version: '3'
 services:
-  # mosquitto:
-  #   image: "monster1025/alpine86-mosquitto:latest"
-  #   container_name: mosquitto
-  #   env_file: ./mosquitto/settings/mqtt.env
-  #   ports:
-  #     - "1883:1883"
-  #   restart: always
-  #   logging:
-  #     driver: json-file
-  #     options:
-  #       max-size: 50m 
+  mosquitto:
+    #image: "monster1025/alpine86-mosquitto:latest"
+    build: ./mosquitto/docker
+    container_name: mosquitto
+    env_file: ./mosquitto/settings/mqtt.env
+    ports:
+      - "1883:1883"
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m 
+
   home:
    #image: monster1025/yandex-ddns
    build: ./ddns/docker
@@ -81,3 +83,18 @@ services:
       options:
           max-size: "10m"
           max-file: "5"
+
+  rass:
+    build:
+      context: ./rass/docker
+      dockerfile: Dockerfile-rpi
+    container_name: rass
+    network_mode: host
+    volumes:
+      - ./local.json:/room-assistant/config/local.json
+    environment:
+      - ROOM=balcony
+    env_file: 
+      - ./mosquitto/settings/mqtt.env
+      - ./rass/settings/rass.env
+    restart: always

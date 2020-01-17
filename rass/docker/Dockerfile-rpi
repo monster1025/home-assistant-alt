@@ -1,0 +1,14 @@
+FROM arm32v7/node
+
+RUN apt-get update && \
+    apt-get install -y bluetooth bluez libbluetooth-dev libudev-dev libusb-1.0-0-dev python3 python3-pip && \
+    rm -rf /var/lib/apt/lists/*
+
+ADD /room-assistant/package.json /room-assistant/package.json
+WORKDIR /room-assistant
+RUN npm install
+
+ADD room-assistant /room-assistant
+ADD run.sh /run.sh
+
+CMD ["/run.sh"]
