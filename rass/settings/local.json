@@ -11,7 +11,7 @@
         "maxDistance": 0,
         "majorMask": "0xFFFF",
         "useAddress": false,
-        "whitelist": []
+        "whitelist": ["1862e411fd87"]
     },
     "gpio": [],
     "mqtt": {
@@ -20,6 +20,7 @@
         "url": "mqtt://192.168.1.6:1883",
         "password": "mqttpass"
     },
+    "autoDiscovery": true,
     "room": "balcony",
     "services": [
         "ble",
