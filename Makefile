@@ -5,7 +5,7 @@ ARGS = `arg="$(filter-out $@,$(MAKECMDGOALS))" && echo $${arg:-${1}}`
 update_secrets_sample:
 	@echo "Masking passwords..."
 	#hass
-	@cat secrets/hass-alt/secrets.yaml | sed "s/\:.*/\: xxxxxxxxx/g" > hass/settings/secrets.yaml.sample #mask passwords
+	@cat ./secrets/hass-alt/settings/secrets.yaml | sed "s/\:.*/\: xxxxxxxxx/g" > hass/settings/secrets.yaml.sample #mask passwords
 	@sed -i "s/latitude:.*/latitude: 1.0/g" hass/settings/secrets.yaml.sample #must be a number
 	@sed -i "s/longitude:.*/longitude: 1.0/g" hass/settings/secrets.yaml.sample #must be a number
 	@sed -i "s/aqara1_mac:.*/aqara1_mac: xxxxxxxxxxxx/g" hass/settings/secrets.yaml.sample #len 12
