@@ -1,4 +1,4 @@
-#!/bin/bash
-python3 /room-assistant/python/main.py
+#!/bin/sh
+python3 /python/main.py
 cd /room-assistant
 npm start
