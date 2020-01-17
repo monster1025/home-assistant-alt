@@ -1,11 +1,11 @@
 FROM mkerix/room-assistant:latest-arm32
 
-ADD ./python /python
-ADD run.sh /run.sh
+#ADD ./python /python
+#ADD run.sh /run.sh
 
-RUN apt-get update && \
-    apt-get install -y python3 python3-pip && \
-    rm -rf /var/lib/apt/lists/* && \
-    chmod +x /run.sh
+#RUN apk update && \
+#    apk add libusb-dev python3 build-base && \
+#    rm -rf /var/lib/apt/lists/* && \
+#    chmod +x /run.sh
 
-CMD ["/run.sh"]
+#CMD ["/run.sh"]
