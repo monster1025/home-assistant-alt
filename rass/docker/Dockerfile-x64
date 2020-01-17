@@ -1,16 +1,11 @@
-FROM node:8.12.0
+FROM mkerix/room-assistant:latest
+
+ADD ./python /python
+ADD run.sh /run.sh
 
 RUN apt-get update && \
-    apt-get install -y bluetooth bluez libbluetooth-dev libudev-dev libusb-1.0-0-dev python3 python3-pip && \
-    rm -rf /var/lib/apt/lists/*
-
-ADD /room-assistant/package.json /room-assistant/package.json
-ADD ./python/main.py /room-assistant/python/main.py
-WORKDIR /room-assistant
-RUN npm install
-RUN npm install --build-from-source=noble@1.9.1,mqtt@2.18.2
-
-ADD room-assistant /room-assistant
-ADD run.sh /run.sh
+    apt-get install -y python3 python3-pip && \
+    rm -rf /var/lib/apt/lists/* && \
+    chmod +x /run.sh
 
 CMD ["/run.sh"]
