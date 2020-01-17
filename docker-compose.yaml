@@ -33,9 +33,9 @@ services:
       - "9898:9898/udp"
       - "4321:4321/udp"
       - "51827:51827" #Homekit
-    #depends_on:
+    depends_on:
     #  - mysql
-    #  - mosquitto
+     - mosquitto
     #  - broadlink
     network_mode: "host"
     restart: always
@@ -90,11 +90,23 @@ services:
       dockerfile: Dockerfile-rpi
     container_name: rass
     network_mode: host
-    volumes:
-      - ./local.json:/room-assistant/config/local.json
-    environment:
-      - ROOM=balcony
     env_file: 
-      - ./mosquitto/settings/mqtt.env
-      - ./rass/settings/rass.env
+     - ./mosquitto/settings/mqtt.env
+     # - ./rass/settings/rass.env
+    environment:
+      - LOGGER=true
+      - LOGLEVEL=info
+      - SERVICES=ble,mqtt
+      - ROOM=balcony
+      - MQTT_URL=mqtt://192.168.1.6
+      - MQTT_REJECT_UNAUTHORIZED=true
+      - AUTO_DISCOVERY=true
+      - BLE_CHANNEL=home/presence
+      - BLE_USE_ADDRESS=false
+      - BLE_WHITELIST=['c339570b5315','1862e411fd87']
     restart: always
+    logging:
+      driver: json-file
+      options:
+          max-size: "10m"
+          max-file: "5"
