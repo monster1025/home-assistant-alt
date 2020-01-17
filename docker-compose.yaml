@@ -94,16 +94,17 @@ services:
      - ./mosquitto/settings/mqtt.env
      # - ./rass/settings/rass.env
     environment:
-      - LOGGER=true
-      - LOGLEVEL=info
-      - SERVICES=ble,mqtt
-      - ROOM=balcony
-      - MQTT_URL=mqtt://192.168.1.6
-      - MQTT_REJECT_UNAUTHORIZED=true
-      - AUTO_DISCOVERY=true
-      - BLE_CHANNEL=home/presence
-      - BLE_USE_ADDRESS=false
-      - BLE_WHITELIST=['c339570b5315','1862e411fd87']
+      AUTO_DISCOVERY: true
+      # - LOGGER=true
+      # - LOGLEVEL=info
+      # - SERVICES=ble,mqtt
+      # - ROOM=balcony
+      # - MQTT_URL=mqtt://192.168.1.6
+      # - MQTT_REJECT_UNAUTHORIZED=true
+      # - AUTO_DISCOVERY=true
+      # - BLE_CHANNEL=home/presence
+      # - BLE_USE_ADDRESS=false
+      # - BLE_WHITELIST=['c339570b5315','1862e411fd87']
     restart: always
     logging:
       driver: json-file
