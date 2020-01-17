@@ -42,6 +42,9 @@ def check_args(self, args):
     return False
   return True
 
+def check_constaint(self, name):
+  self.log('checking constaint: {}'.format(name))
+
 def get_group_entities(self, group):
     attributes = self.get_state(group, attribute = "all")
     if (attributes == None):

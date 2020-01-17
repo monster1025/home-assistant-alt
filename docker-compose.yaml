@@ -1,7 +1,6 @@
 version: '3'
 services:
   mosquitto:
-    #image: "monster1025/alpine86-mosquitto:latest"
     build: ./mosquitto/docker
     container_name: mosquitto
     env_file: ./mosquitto/settings/mqtt.env
@@ -14,8 +13,8 @@ services:
         max-size: 50m 
 
   home:
-   #image: monster1025/yandex-ddns
-   build: ./ddns/docker
+   build: 
+    context: ./ddns/docker
    env_file: ./ddns/settings/token.env
    environment:
      - SUBDOMAIN="home-alt"
@@ -26,7 +25,7 @@ services:
     container_name: hass
     volumes:
       - ./hass/settings:/config
-      - ./secrets/hass-alt/secrets.yaml:/config/secrets.yaml:ro
+      - ./secrets/hass-alt/settings/secrets.yaml:/config/secrets.yaml:ro
       - /etc/localtime:/etc/localtime:ro
     ports:
       - "8123:8123"
@@ -57,7 +56,7 @@ services:
       - hass
     volumes:
       - ./appdaemon/settings:/conf
-      - ./hass/settings/secrets.yaml:/conf/secrets.yaml:ro
+      - ./secrets/hass-alt/settings/secrets.yaml:/conf/secrets.yaml:ro
       - /etc/localtime:/etc/localtime:ro
     restart: always
     links:
@@ -76,7 +75,7 @@ services:
       - "6052:6052"
     volumes:
       - ./esphome/settings:/config
-      - ./hass/settings/secrets.yaml:/config/secrets.yaml:ro
+      - ./secrets/hass-alt/settings/secrets.yaml:/config/secrets.yaml:ro
     network_mode: "host"
     logging:
       driver: json-file
