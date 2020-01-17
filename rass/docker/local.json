@@ -1,0 +1,36 @@
+{
+    "api": {
+        "port": "3000"
+    },
+    "ble": {
+        "channel": "home/presence",
+        "onlyIBeacon": false,
+        "updateFrequency": 0,
+        "minorMask": "0xFFFF",
+        "processIBeacon": true,
+        "maxDistance": 0,
+        "majorMask": "0xFFFF",
+        "useAddress": false,
+        "whitelist": [
+            "f0fc392e5adb",
+            "e7152ad8e7f2",
+            "d0c71ff654ff",
+            "e454c8a4b7ab",
+            "eefb5e5c8719"
+        ]
+    },
+    "gpio": [],
+    "mqtt": {
+        "rejectUnauthorized": true,
+        "username": "hass",
+        "url": "mqtt://192.168.1.6:1883",
+        "password": "mqttpass"
+    },
+    "room": "balcony",
+    "services": [
+        "ble",
+        "console",
+        "mqtt"
+    ],
+    "shell": []
+}

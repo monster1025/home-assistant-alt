@@ -1,0 +1,26 @@
+{
+  "services": [],
+  "room": "default-room",
+  "api": {
+    "port": "3000"
+  },
+  "mqtt": {
+    "url": "mqtt://localhost",
+    "username": "",
+    "password": "",
+    "rejectUnauthorized": true
+  },
+  "ble": {
+    "channel": "room_presence",
+    "useAddress": false,
+    "whitelist": [],
+    "maxDistance": 0,
+    "updateFrequency": 0,
+    "processIBeacon": true,
+    "onlyIBeacon": false,
+    "majorMask": "0xFFFF",
+    "minorMask": "0xFFFF"
+  },
+  "gpio": [],
+  "shell": []
+}
