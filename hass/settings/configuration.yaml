@@ -5,9 +5,7 @@ homeassistant:
   elevation: 124
   unit_system: metric
   time_zone: !secret timezone
-  customize: !include_dir_merge_named configuration/customize
-  # customize_domain: !include customize_domain.yaml
-  packages: !include_dir_named packages/
+  packages: !include_dir_named packages
 
 logger:
   default: info
@@ -45,9 +43,9 @@ history:
 logbook:
 
 # # Components
-automation: !include_dir_merge_list configuration/automation
+#automation: !include_dir_merge_list configuration/automation
 # #apple_tv: !include_dir_merge_list configuration/appletv
-alarm_control_panel: !include_dir_merge_list configuration/alarm_control_panel
+# alarm_control_panel: !include_dir_merge_list configuration/alarm_control_panel
 # binary_sensor: !include_dir_merge_list configuration/binary_sensor
 # camera: !include_dir_merge_list configuration/camera
 # fan: !include_dir_merge_list configuration/fan
@@ -57,7 +55,7 @@ alarm_control_panel: !include_dir_merge_list configuration/alarm_control_panel
 # input_datetime: !include_dir_merge_named configuration/input/input_datetime
 # #input_number: !include_dir_merge_named configuration/input/input_number
 # light: !include_dir_merge_list configuration/light
-notify: !include_dir_merge_list configuration/notify
+# notify: !include_dir_merge_list configuration/notify
 # media_player: !include_dir_merge_list configuration/media_player
 # script: !include_dir_merge_named configuration/script
 # sensor: !include_dir_merge_list configuration/sensor
@@ -67,11 +65,11 @@ notify: !include_dir_merge_list configuration/notify
 
 # #one item
 mqtt: !include configuration/mqtt/mqtt.yaml
-telegram_bot: !include configuration/bot/telegram_bot.yaml
+#telegram_bot: !include configuration/bot/telegram_bot.yaml
 # vacuum: !include configuration/xiaomi_aqara/vacuum.yaml
-xiaomi_aqara: !include configuration/xiaomi_aqara/xiaomi_aqara.yaml
+#xiaomi_aqara: !include configuration/xiaomi_aqara/xiaomi_aqara.yaml
 # nest: !include configuration/nest/nest.yaml
-homekit: !include configuration/homekit/homekit.yaml
+#homekit: !include configuration/homekit/homekit.yaml
 
 # #power meter
 # modbus: !include configuration/modbus.yaml
