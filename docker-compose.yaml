@@ -12,7 +12,7 @@ services:
       options:
         max-size: 50m 
 
-  home:
+  ddns-home:
    build: 
     context: ./ddns/docker
    env_file: ./ddns/settings/token.env
