@@ -11,7 +11,6 @@
         "maxDistance": 0,
         "majorMask": "0xFFFF",
         "useAddress": false,
-        "whitelist": ["1862e411fd87"]
     },
     "gpio": [],
     "mqtt": {
@@ -21,7 +20,7 @@
         "password": "mqttpass"
     },
     "autoDiscovery": true,
-    "room": "balcony",
+    "room": "rpi",
     "services": [
         "ble",
         "console",

@@ -363,22 +363,22 @@ views:
   #         - sensor.uptime_nest
   #         - sensor.uptime_bathlight
   #         - sensor.uptime_kitchen
-  # - title: "Информация"
-  #   icon: mdi:monitor-multiple
-  #   cards:
-  #     - type: entities
-  #       title: "ОС"
-  #       show_header_toggle: false
-  #       entities:
-  #         - sensor.processor_use
-  #         - sensor.memory_free
-  #         - sensor.swap_use_percent
-  #         - sensor.disk_use_percent
-  #         - sensor.ssl_certificate_expiry_2
-  #     - type: entities
-  #       title: "Сеть"
-  #       show_header_toggle: false
-  #       entities:
-  #         - sensor.speedtest_ping
-  #         - sensor.speedtest_download
-  #         - sensor.speedtest_upload
+  - title: "Информация"
+    icon: mdi:monitor-multiple
+    cards:
+      - type: entities
+        title: "ОС"
+        show_header_toggle: false
+        entities:
+          - sensor.processor_use
+          - sensor.memory_free
+          - sensor.swap_use_percent
+          - sensor.disk_use_percent
+          - sensor.ssl_certificate_expiry
+      - type: entities
+        title: "Сеть"
+        show_header_toggle: false
+        entities:
+          - sensor.speedtest_ping
+          - sensor.speedtest_download
+          - sensor.speedtest_upload

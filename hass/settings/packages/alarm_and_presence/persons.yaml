@@ -1,0 +1,13 @@
+person:
+  - name: danil
+    id: 39f70a8ba13545668bc16c36c28e7746
+    user_id: e8b7ce3e243c42008aed8a2fe59b217a
+  - name: svetlana
+    id: f829f3ccde894969b5b0d78723b68fb1
+    user_id: 3d344b5e55d84ef5b29e359864d1284d
+
+customize:
+  person.danil:
+    entity_picture: "/local/danil.jpg"
+  person.svetlana:
+    entity_picture: "/local/svetlana.jpg"

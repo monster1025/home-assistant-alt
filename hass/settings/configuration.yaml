@@ -15,7 +15,6 @@ logger:
 api:
 
 http:
-  # api_password: !secret ha_password
   base_url: !secret base_url
   use_x_forwarded_for: true
   trusted_proxies:
@@ -33,50 +32,6 @@ config:
 discovery:
 system_health:
 
-#enables video recording
-# stream:
-
-
 # # Enables support for tracking state changes over time
-recorder: !include configuration/recorder.yaml
 history:
 logbook:
-
-# # Components
-#automation: !include_dir_merge_list configuration/automation
-# #apple_tv: !include_dir_merge_list configuration/appletv
-# alarm_control_panel: !include_dir_merge_list configuration/alarm_control_panel
-# binary_sensor: !include_dir_merge_list configuration/binary_sensor
-# camera: !include_dir_merge_list configuration/camera
-# fan: !include_dir_merge_list configuration/fan
-# #climate: !include_dir_merge_list configuration/climate
-# group: !include_dir_merge_named configuration/group
-# input_boolean: !include_dir_merge_named configuration/input/input_boolean
-# input_datetime: !include_dir_merge_named configuration/input/input_datetime
-# #input_number: !include_dir_merge_named configuration/input/input_number
-# light: !include_dir_merge_list configuration/light
-# notify: !include_dir_merge_list configuration/notify
-# media_player: !include_dir_merge_list configuration/media_player
-# script: !include_dir_merge_named configuration/script
-# sensor: !include_dir_merge_list configuration/sensor
-# switch: !include_dir_merge_list configuration/switch
-# tts: !include_dir_merge_list configuration/tts
-# remote: !include_dir_merge_list configuration/remote
-
-# #one item
-mqtt: !include configuration/mqtt/mqtt.yaml
-#telegram_bot: !include configuration/bot/telegram_bot.yaml
-# vacuum: !include configuration/xiaomi_aqara/vacuum.yaml
-#xiaomi_aqara: !include configuration/xiaomi_aqara/xiaomi_aqara.yaml
-# nest: !include configuration/nest/nest.yaml
-#homekit: !include configuration/homekit/homekit.yaml
-
-# #power meter
-# modbus: !include configuration/modbus.yaml
-
-# #mysensors: !include configuration/mysensors.yaml
-
-# utility_meter: !include_dir_merge_named configuration/utility_meter
-
-# speedtestdotnet: !include configuration/speedtest.yaml
-# yandex_smart_home: !include configuration/alice.yaml    

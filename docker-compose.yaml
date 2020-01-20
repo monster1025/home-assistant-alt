@@ -112,23 +112,10 @@ services:
       dockerfile: Dockerfile-rpi
     container_name: rass
     network_mode: host
+    env_file: 
+      - ./mosquitto/settings/mqtt.env
     volumes:
       - ./rass/settings/local.json:/room-assistant/config/local.json
-    # env_file: 
-    #  - ./mosquitto/settings/mqtt.env
-     # - ./rass/settings/rass.env
-    # environment:
-    #   MQTT_URL: 'mqtt://192.168.1.6'
-    #   AUTO_DISCOVERY: 'true'
-    #   BLE_WHITELIST: '["c339570b5315","1862e411fd87"]'
-    #   BLE_CHANNEL: 'home/presence'
-    #   ROOM: 'balcony'
-    #   SERVICES: 'ble,mqtt'
-      # - LOGGER=true
-      # - LOGLEVEL=info
-      # - 
-      # - MQTT_REJECT_UNAUTHORIZED=true
-      # - AUTO_DISCOVERY=true
     restart: always
     logging:
       driver: json-file
