@@ -26,6 +26,8 @@ zigbee2mqtt/settings/state.json
 zigbee2mqtt/settings/database.db
 zigbee2mqtt/settings/log/*
 
+certbot/settings/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
