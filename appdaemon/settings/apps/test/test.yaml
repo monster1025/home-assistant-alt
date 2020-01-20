@@ -1,0 +1,6 @@
+test:
+ module: test
+ class: Test
+ global_dependencies:
+  - globals
+ constrain: input_boolean.constraint_test

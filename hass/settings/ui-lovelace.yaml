@@ -16,25 +16,25 @@ views:
           # - vacuum.xiaomi_vacuum_cleaner
           # - switch.domofon_force_open
           # - switch.wifi_socket
-      # - type: entities
-      #   title: "Гостиная"
-      #   show_header_toggle: false
-      #   entities:
-      #     - sensor.temperature_158d0001149b3c
-      #     - sensor.humidity_158d0001149b3c
-      #     - sensor.xiaomi_airpurifier_air_quality_pm25
-      #     - sensor.senseair_co2_value
-      #     - light.yeelight_color1_34ce008fe328
-      #     - light.yeelight_color1_286c071065c7
-      #     - light.yeelight_mono1_34ce0087ff33
-      #     - light.yeelight_mono1_f0b4290e5444
-      #     - light.yeelight_mono1_f0b429a8f6df
-      #     - light.salt_lamp
-      #     - cover.curtain_158d0002b0c46a
-      #     - switch.plug_158d0001104a0c
-      #     - switch.plug_158d00010dd98d
-      #     - fan.xiaomi_miio_device
-      #     - climate.living_room
+      - type: entities
+        title: "Гостиная"
+        show_header_toggle: false
+        entities:
+          # - sensor.temperature_158d0001149b3c
+          # - sensor.humidity_158d0001149b3c
+          # - sensor.xiaomi_airpurifier_air_quality_pm25
+          - sensor.senseair_co2_value
+          # - light.yeelight_color1_34ce008fe328
+          # - light.yeelight_color1_286c071065c7
+          # - light.yeelight_mono1_34ce0087ff33
+          # - light.yeelight_mono1_f0b4290e5444
+          # - light.yeelight_mono1_f0b429a8f6df
+          # - light.salt_lamp
+          # - cover.curtain_158d0002b0c46a
+          # - switch.plug_158d0001104a0c
+          # - switch.plug_158d00010dd98d
+          # - fan.xiaomi_miio_device
+          # - climate.living_room
       # - type: entities
       #   title: "Кухня"
       #   show_header_toggle: false
@@ -79,20 +79,13 @@ views:
   - title: "Датчики"
     icon: mdi:nfc
     cards:
-      # - type: entities
-      #   title: "Движение"
-      #   show_header_toggle: false
-  #       entities:
-  #         - binary_sensor.motion_sensor_158d0000e7c7ad
-  #         - binary_sensor.motion_sensor_158d0002044548
-  #         - binary_sensor.motion_sensor_158d0000fbc664
-  #         - binary_sensor.motion_sensor_158d0001535c97
-  #         - binary_sensor.motion_sensor_158d0000f9546b
-  #         - binary_sensor.motion_sensor_158d000165fed5
-  #         - binary_sensor.motion_sensor_158d0001537e21
-  #         - binary_sensor.motion_sensor_158d0000f6b2fa
-  #         - binary_sensor.motion_sensor_158d0001e50ce4
-  #         - binary_sensor.motion_sensor_158d0001e80f0d
+      - type: entities
+        title: "Движение"
+        show_header_toggle: false
+        entities:
+          - binary_sensor.motion_sensor_bath
+          - binary_sensor.motion_sensor_kitchen
+          - binary_sensor.motion_sensor_hall
   #     - type: entities
   #       title: "Протечка"
   #       show_header_toggle: false
@@ -108,18 +101,11 @@ views:
   #       show_header_toggle: false
   #       entities:
   #         - binary_sensor.smoke_sensor_158d00023115ad
-  #     - type: entities
-  #       title: "Двери"
-  #       show_header_toggle: false
-  #       entities:
-  #         - binary_sensor.door_window_sensor_158d0001130141
-  #         - binary_sensor.door_window_sensor_158d000111a469
-  #         - binary_sensor.door_window_sensor_158d00010f7e19
-  #         - binary_sensor.door_window_sensor_158d0002254373
-  #         - binary_sensor.door_window_sensor_158d0001b77b1b
-  #         - binary_sensor.door_window_sensor_158d0001c0e46d
-  #         - binary_sensor.door_window_sensor_158d0001e74660
-  #         - binary_sensor.door_window_sensor_158d0001b711ec
+      - type: entities
+        title: "Двери"
+        show_header_toggle: false
+        entities:
+          - binary_sensor.door_window_sensor_bath
       - type: entities
         title: "Счетчики воды"
         show_header_toggle: false

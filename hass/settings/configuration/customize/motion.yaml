@@ -1,0 +1,7 @@
+#Движение
+binary_sensor.motion_sensor_158d0001537e21:
+  friendly_name: Кухня(Движение)
+binary_sensor.motion_sensor_158d0001e80f0d:
+  friendly_name: Ванна(Движение)
+binary_sensor.motion_sensor_158d0000f6b2fa:
+  friendly_name: Прихожая(Движение)
