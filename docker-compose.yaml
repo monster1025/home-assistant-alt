@@ -48,6 +48,7 @@ services:
       driver: json-file
       options:
         max-size: 50m
+  
   tor:
    build: 
     context: ./tor/docker
@@ -129,6 +130,47 @@ services:
       # - MQTT_REJECT_UNAUTHORIZED=true
       # - AUTO_DISCOVERY=true
     restart: always
+    logging:
+      driver: json-file
+      options:
+          max-size: "10m"
+          max-file: "5"
+
+  nginx:
+    image: nginx
+    hostname: nginx
+    container_name: nginx
+    links:
+      - "hass"
+      - "appdaemon"
+      - "certbot"
+    volumes:
+        - ./nginx/settings/site-confs:/etc/nginx/conf.d
+        - ./certbot/settings/data:/config/keys
+    ports:
+        - "80:80"
+        - "443:443"
+    restart: always
+    logging:
+      driver: json-file
+      options:
+          max-size: "10m"
+          max-file: "5"
+
+  certbot:
+    build:
+      context: ./certbot/docker
+      dockerfile: Dockerfile-rpi
+    restart: always
+    container_name: certbot
+    volumes:
+        - ./certbot/docker/update_certs.sh:/update_certs.sh:ro
+        - ./certbot/settings/data:/etc/letsencrypt
+        - /etc/localtime:/etc/localtime:ro
+    ports:
+        - "8081:80"
+    # entrypoint: certbot
+    # command: certonly --standalone --agree-tos --non-interactive --email admin@yandex5.ru -d home-alt.yandex5.ru
     logging:
       driver: json-file
       options:
