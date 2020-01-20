@@ -35,6 +35,7 @@ services:
     depends_on:
     #  - mysql
      - mosquitto
+     - tor
     #  - broadlink
     network_mode: "host"
     restart: always
@@ -47,7 +48,14 @@ services:
       driver: json-file
       options:
         max-size: 50m
-        
+  tor:
+   build: 
+    context: ./tor/docker
+   container_name: tor
+   ports:
+      - "9150:9150"
+   restart: always
+
   appdaemon:
     build:
       context: ./appdaemon/docker
@@ -83,6 +91,20 @@ services:
           max-size: "10m"
           max-file: "5"
 
+  zigbee2mqtt:
+    image: koenkk/zigbee2mqtt:latest-dev
+    container_name: zigbee2mqtt
+    volumes:
+      - ./zigbee2mqtt/settings:/app/data
+    devices:
+      - /dev/zigbee:/dev/ttyACM0
+    privileged: true
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m  
+        
   rass:
     build:
       context: ./rass/docker

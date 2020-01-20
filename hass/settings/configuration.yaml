@@ -71,7 +71,7 @@ telegram_bot: !include configuration/bot/telegram_bot.yaml
 # vacuum: !include configuration/xiaomi_aqara/vacuum.yaml
 xiaomi_aqara: !include configuration/xiaomi_aqara/xiaomi_aqara.yaml
 # nest: !include configuration/nest/nest.yaml
-# homekit: !include configuration/homekit/homekit.yaml
+homekit: !include configuration/homekit/homekit.yaml
 
 # #power meter
 # modbus: !include configuration/modbus.yaml

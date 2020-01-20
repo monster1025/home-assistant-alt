@@ -42,8 +42,13 @@ def check_args(self, args):
     return False
   return True
 
-def check_constaint(self, name):
+def check_constaint(self, name='constraint'):
   self.log('checking constaint: {}'.format(name))
+  if name not in self.args:
+  	self.log('script is not constrained')
+  	return True;
+  constaint_input = self.args[name]
+  constaint_state = self.get_state(constaint_input)
 
 def get_group_entities(self, group):
     attributes = self.get_state(group, attribute = "all")

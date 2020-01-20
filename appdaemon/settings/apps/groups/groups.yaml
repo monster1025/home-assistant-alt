@@ -16,3 +16,16 @@ sensor_tags:
   class: Groups
   device_type: sensor
   entity_part: "tag_"
+
+
+motion:
+  module: groups
+  class: Groups
+  device_type: binary_sensor
+  entity_part: "motion_sensor_"
+
+doors:
+  module: groups
+  class: Groups
+  device_type: binary_sensor
+  entity_part: "door_window_sensor_"
