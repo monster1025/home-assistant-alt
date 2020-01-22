@@ -29,3 +29,10 @@ doors:
   class: Groups
   device_type: binary_sensor
   entity_part: "door_window_sensor_"
+
+report_entities:
+  module: groups
+  class: Groups
+  friendly_name: Контроль при приходе-уходе
+  device_type: light
+  entity_part: "_"
