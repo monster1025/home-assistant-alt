@@ -10,7 +10,7 @@
         "processIBeacon": true,
         "maxDistance": 0,
         "majorMask": "0xFFFF",
-        "useAddress": false,
+        "useAddress": false
     },
     "gpio": [],
     "mqtt": {
