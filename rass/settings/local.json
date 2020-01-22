@@ -14,16 +14,15 @@
     },
     "gpio": [],
     "mqtt": {
-        "rejectUnauthorized": true,
-        "username": "hass",
         "url": "mqtt://192.168.1.6:1883",
-        "password": "mqttpass"
+        "username": "hass",
+        "password": "mqttpass",
+        "rejectUnauthorized": true
     },
     "autoDiscovery": true,
     "room": "rpi",
     "services": [
         "ble",
-        "console",
         "mqtt"
     ],
     "shell": []
