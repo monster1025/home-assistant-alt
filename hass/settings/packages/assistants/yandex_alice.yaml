@@ -11,6 +11,7 @@ yandex_smart_home:
       - input_boolean.alice_night_mode
       - input_boolean.alice_turn_off_light
       - input_boolean.alice_away_mode
+      - input_boolean.find_phone_danil
 
     exclude_entities:
       - switch.plug_158d00020f3a29
@@ -30,6 +31,9 @@ yandex_smart_home:
 
     
   entity_config:
+    input_boolean.find_phone_danil:
+      name: "Найти телефон Данила"
+      room: "Сценарии"
     input_boolean.alice_away_mode:
       name: "Я ушёл"
       room: "Сценарии"
@@ -114,3 +118,23 @@ yandex_smart_home:
     light.wled:
       name: "Ёлка"
       room: "Гостиная"
+
+
+input_boolean:
+  find_phone_danil:
+    name: Найти телефон Данила
+
+automation:
+  alias: Найти телефон Данила
+  trigger:
+    platform: state
+    entity_id: input_boolean.find_phone_danil
+    to: 'on'
+  action:
+    - service: input_boolean.turn_off
+      data:
+        entity_id: input_boolean.find_phone_danil
+    - service: icloud.play_sound
+      data:
+        account: admin
+        device_name: MonsterPhone8
