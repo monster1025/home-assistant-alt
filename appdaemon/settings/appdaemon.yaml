@@ -12,7 +12,7 @@ appdaemon:
   plugins:
     HASS:
       type: hass
-      namespace: hass
+      namespace: default
       ha_url: !secret ha_url
       token: !secret ha_token
 
@@ -25,7 +25,7 @@ appdaemon:
       client_user: !secret mqtt_user
       client_password: !secret mqtt_password
       client_topics:
-        - home/presence/rpi
+        - home/presence/#
 
 http:
   url: !secret ha_url
