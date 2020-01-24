@@ -5,9 +5,10 @@ fan:
     host: !secret purifier_ip
     token: !secret purifier_key
 
-customize:
-  fan.xiaomi_miio_device:
-    - friendly_name: "Очиститель воздуха"
+homeassistant:
+  customize:
+    fan.xiaomi_miio_device:
+      friendly_name: Очиститель воздуха
 
 sensor:
   - platform: template

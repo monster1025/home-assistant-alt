@@ -127,6 +127,8 @@ services:
     build: 
       context: ./happybubbles/docker
     container_name: happybubbles
+    volumes:
+      - ./happybubbles/settings/presence.db:/presence.db
     env_file: ./mosquitto/settings/mqtt.env
     environment:
       - MQTT_HOST_PORT=192.168.1.6:1883
