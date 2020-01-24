@@ -10,10 +10,10 @@ Arguments:
  - events: List of events to monitor
 """
 
-class RassToHappyBubbles(mqtt.Mqtt):
-    base_topic = "home/presence"
+class HappyBubblesToDeviceTracker(mqtt.Mqtt):
+    base_topic = "happy-bubbles/presence/ha"
     def initialize(self) -> None:
-        self.log('Initialize RassToHappyBubbles')
+        self.log('Initialize HappyBubblesToDeviceTracker')
         self.mqtt_subscribe('{}/#'.format(self.base_topic), namespace='mqtt')
         self.listen_event(self.event_listener, 'MQTT_MESSAGE', namespace='mqtt')
     
@@ -21,17 +21,15 @@ class RassToHappyBubbles(mqtt.Mqtt):
         topic = data.get('topic', '')
         if self.base_topic	not in topic:
         	return
-        #array = ['hall', 'balcony']
-        #random.shuffle(array)
-        #device=array[0]
+        location = topic.replace('{}/'.format(self.base_topic), "")
 
-        device = topic.replace('{}/'.format(self.base_topic), "")
         payload = json.loads(data['payload']) if data.get('payload') else {}
+        # self.log('[{}] topic: {}, payload: {}'.format(event_name, topic, payload))
         id = payload.get('id', None)
-        hb_topic="happy-bubbles/ble/{}/raw/{}".format(device,id)
-        payload['hostname'] = device
-        payload['mac'] = payload.get('id', '')
+        name = payload.get('name', None)
+        distance = payload.get('distance', None)
 
-        payload_data = json.dumps(payload)
-        self.mqtt_publish(hb_topic, payload_data, qos = 0, retain = False, namespace='mqtt')
-        # self.log('publishing to: {}: {}'.format(hb_topic, payload_data))
+        hb_topic="happy-bubbles/location/{}".format(id)
+        self.mqtt_publish(hb_topic, location, qos = 0, retain = False, namespace='mqtt')
+        
+        self.log('Beacon {} ({}) moved to {} (distance: {}).'.format(name, id, location, distance))

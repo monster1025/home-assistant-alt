@@ -78,7 +78,7 @@ services:
 
 
   esphome:
-    image: esphome/esphome-armv7
+    image: esphome/esphome #esphome-armv7
     container_name: esphome
     ports:
       - "6052:6052"
@@ -92,24 +92,24 @@ services:
           max-size: "10m"
           max-file: "5"
 
-  zigbee2mqtt:
-    image: koenkk/zigbee2mqtt:latest-dev
-    container_name: zigbee2mqtt
-    volumes:
-      - ./zigbee2mqtt/settings:/app/data
-    devices:
-      - /dev/zigbee:/dev/ttyACM0
-    privileged: true
-    restart: always
-    logging:
-      driver: json-file
-      options:
-        max-size: 50m  
+  # zigbee2mqtt:
+  #   image: koenkk/zigbee2mqtt:latest-dev
+  #   container_name: zigbee2mqtt
+  #   volumes:
+  #     - ./zigbee2mqtt/settings:/app/data
+  #   devices:
+  #     - /dev/zigbee:/dev/ttyACM0
+  #   privileged: true
+  #   restart: always
+  #   logging:
+  #     driver: json-file
+  #     options:
+  #       max-size: 50m  
         
   rass:
     build:
       context: ./rass/docker
-      dockerfile: Dockerfile-rpi
+      dockerfile: Dockerfile
     container_name: rass
     network_mode: host
     env_file: 
@@ -158,7 +158,7 @@ services:
   certbot:
     build:
       context: ./certbot/docker
-      dockerfile: Dockerfile-rpi
+      dockerfile: Dockerfile #Dockerfile-rpi
     restart: always
     container_name: certbot
     volumes:
@@ -167,8 +167,8 @@ services:
         - /etc/localtime:/etc/localtime:ro
     ports:
         - "8081:80"
-    # entrypoint: certbot
-    # command: certonly --standalone --agree-tos --non-interactive --email admin@yandex5.ru -d home-alt.yandex5.ru
+    #entrypoint: certbot
+    #command: certonly --standalone --agree-tos --non-interactive --email admin@yandex5.ru -d home-alt.yandex5.ru
     logging:
       driver: json-file
       options:

@@ -1,0 +1,32 @@
+
+nut_danil:
+  hide_if_away: false
+  icon:
+  mac:
+  name: nut danil
+  picture:
+  track: true
+
+danil_car_keys:
+  hide_if_away: false
+  icon:
+  mac:
+  name: danil car keys
+  picture:
+  track: true
+
+danil_wallet:
+  hide_if_away: false
+  icon:
+  mac:
+  name: danil wallet
+  picture:
+  track: true
+
+sveta_keys:
+  hide_if_away: false
+  icon:
+  mac:
+  name: sveta keys
+  picture:
+  track: true
