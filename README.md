@@ -1,4 +1,5 @@
 # home-assistant-alt
-"Alternate" home-assistant configurateion (other flat).
+[![Build Status](https://travis-ci.org/monster1025/home-assistant.svg?branch=master)](https://travis-ci.org/monster1025/home-assistant)
 
-Raspberry PI 3 as server.
+
+"Alternate" home-assistant configurateion (other flat).
