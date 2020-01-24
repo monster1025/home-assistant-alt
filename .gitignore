@@ -28,6 +28,8 @@ zigbee2mqtt/settings/log/*
 
 certbot/settings/*
 
+happybubbles/settings/presence.db
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

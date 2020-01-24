@@ -1,0 +1,9 @@
+#################################
+#        HOME PRESENSE          #
+#################################
+person_presence:
+  module: person_presence
+  class: PersonPresence
+  ha_panel: alarm_control_panel.ha_alarm
+  global_dependencies:
+    - globals
