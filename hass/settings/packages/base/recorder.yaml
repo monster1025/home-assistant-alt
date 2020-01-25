@@ -10,6 +10,7 @@ recorder:
       - sensor
       - switch
       - vacuum
+      - person
   exclude:
     domains:
       - automation

@@ -2,7 +2,7 @@
 substitutions:
   devicename: watercontrol
   upper_devicename: Watercontrol
-  pin_cold: D8
+  pin_cold: D2
   init_cold: '252.33'
   pin_hot: D7
   init_hot: '122.29'
