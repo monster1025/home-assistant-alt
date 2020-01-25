@@ -1,5 +1,5 @@
 FROM golang:latest as builder  
-RUN mkdir -p /src && cd /src && git clone https://github.com/monster1025/presence.git  .
+RUN mkdir -p /src && cd /src && git clone https://github.com/monster1025/presence.git     .
 WORKDIR /src
 RUN go get -d
 RUN CGO_ENABLED=0 go build -a -installsuffix cgo -o app .    
