@@ -5,9 +5,6 @@
 #define COUNTER_COLD 0
 #define COUNTER_HOT 1
 
-#define COUNTER_COLD_INIT 25233
-#define COUNTER_HOT_INIT 12229
-
 static const char *TAG = "watercounter.sensor";
 
 class WaterCountersSensor : public Component, public Sensor, public CustomAPIDevice {
@@ -19,10 +16,22 @@ class WaterCountersSensor : public Component, public Sensor, public CustomAPIDev
  public:
   Sensor *cold_sensor = new Sensor();
   Sensor *hot_sensor = new Sensor();
+  bool initReadValues = false;
+
+  globals::GlobalsComponent<float> *counter_cold_value;
+  globals::GlobalsComponent<float> *counter_hot_value;
 
   void setup() override {
 	register_service(&WaterCountersSensor::on_set_counter_values, "set_counter_values",
 	                     {"cold_value", "hot_value"});
+
+    counter_cold_value = new globals::GlobalsComponent<float>();
+    App.register_component(counter_cold_value);
+    counter_cold_value->set_restore_value(1547432152);
+
+    counter_hot_value = new globals::GlobalsComponent<float>();
+    App.register_component(counter_hot_value);
+    counter_hot_value->set_restore_value(2087162808);
 
   	ESP_LOGD(TAG, "Initializing counters.");
 	for (int i=0; i<CounterNum; i++) {
@@ -30,15 +39,18 @@ class WaterCountersSensor : public Component, public Sensor, public CustomAPIDev
 		CounterBouncer[i].attach(CounterPin[i]);
 		CounterBouncer[i].interval(100);
 	}
-    ESP_LOGD(TAG, "Reading counters from fs.");
-	for (int i=0; i<CounterNum; i++) {
-		readCounterFromFile(i);
-		sendCounterValue(i);
-	}
 	ESP_LOGD(TAG, "Initialize done.");
   }
 
   void loop() override {
+  	if (is_connected() && !initReadValues) {
+	    ESP_LOGD(TAG, "Reading counters from fs.");
+		for (int i=0; i<CounterNum; i++) {
+			readCounterFromFile(i);
+			sendCounterValue(i);
+		}
+		initReadValues = true;
+	}
 	for (int i=0; i<CounterNum; i++) {
 		boolean changed = CounterBouncer[i].update();
 		if ( changed ) {
@@ -63,6 +75,13 @@ class WaterCountersSensor : public Component, public Sensor, public CustomAPIDev
   // --------------- HASS service call handling ----------------------------
   void on_set_counter_values(float cold_value, float hot_value) 
   {
+  	float prev_cold = counter_cold_value->value();
+  	float prev_hot = counter_hot_value->value();
+
+    ESP_LOGD(TAG, "Previous values: cold - %d, hot - %d; prev: %f, %f", 
+    		CounterValues[COUNTER_COLD], CounterValues[COUNTER_HOT],
+    		prev_cold, prev_hot);
+
     int cold_int = (int) (cold_value * 100.0);
     int hot_int = (int) (hot_value * 100.0);
     ESP_LOGD(TAG, "Saving values: cold - %d, hot - %d", cold_int, hot_int);
@@ -71,8 +90,8 @@ class WaterCountersSensor : public Component, public Sensor, public CustomAPIDev
     CounterValues[COUNTER_HOT] = hot_int;
 
 	for (int i=0; i<CounterNum; i++) {
-    	writeFile(CounterNum);
-    	sendCounterValue(CounterNum);
+    	writeFile(i);
+    	sendCounterValue(i);
     }
 
     ESP_LOGD(TAG, "Save success.");
@@ -80,33 +99,19 @@ class WaterCountersSensor : public Component, public Sensor, public CustomAPIDev
   
   // --------------- functions ----------------------------
 	void readCounterFromFile(int counterId) {
-	  String filename = "/" + countrName(counterId) + ".txt";
-	  File f = SPIFFS.open(filename, "r");
-	  if (f) {
-		CounterValues[counterId] = f.parseInt();
-		f.close();
-		printState(counterId);
-	  }else {
-	  	//if file not found - write default values
-	  	if (counterId == COUNTER_COLD) {
-	  		CounterValues[COUNTER_COLD] = COUNTER_COLD_INIT;
-	  		writeFile(COUNTER_COLD);
-	  	} else if (counterId == COUNTER_HOT) {
-	  		CounterValues[COUNTER_HOT] = COUNTER_HOT_INIT;
-	  		writeFile(COUNTER_HOT);
-	  	}
+	  if (counterId == COUNTER_COLD) {
+	  	CounterValues[COUNTER_COLD] = counter_cold_value->value();
+	  }else if (counterId == COUNTER_HOT) {
+	  	CounterValues[COUNTER_HOT] = counter_hot_value->value();
 	  }
 	}
 
 	void writeFile(int counterId) {
-	  String filename = "/" + countrName(counterId) + ".txt";
-	  File f = SPIFFS.open(filename, "w");
-	  if (!f) {
-		ESP_LOGD(TAG, "Cant open file!");
-		return;
+	  if (counterId == COUNTER_COLD) {
+	    counter_cold_value->value() = CounterValues[COUNTER_COLD];
+	  }else if (counterId == COUNTER_HOT) {
+	  	counter_hot_value->value() = CounterValues[COUNTER_HOT];
 	  }
-	  f.print(String(CounterValues[counterId]));
-	  f.close();
 	  ESP_LOGD(TAG, "Saving done.");
 	}
 

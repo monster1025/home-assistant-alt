@@ -96,3 +96,6 @@ switch:
       - delay: 5s
       - switch.turn_off: water_close
       - lambda: 'id(water_state) = false;'
+#===============================================================================
+  - platform: restart # Переключатель перезагрузки устройства
+    name: "restart_${devicename}"
