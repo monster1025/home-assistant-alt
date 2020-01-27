@@ -2,10 +2,6 @@
 substitutions:
   devicename: watercontrol
   upper_devicename: Watercontrol
-  pin_cold: D2
-  init_cold: '252.33'
-  pin_hot: D7
-  init_hot: '122.29'
   water_open_pin: D4
   water_close_pin: D3
 # ----------- /User configutaion ------------------
@@ -17,7 +13,11 @@ esphome:
   name: $devicename
   platform: ESP8266
   board: d1_mini
-
+  libraries:
+    - "Bounce2"
+  includes:
+    - water_counters.h
+    
 wifi:
   ssid: !secret wifi_24_name
   password: !secret wifi_24_pass
@@ -36,76 +36,49 @@ api:
 ota:
   password: !secret esphome_pass
 
+web_server:
+  port: 80
+
+#===============================================================================
 globals:
  - id: water_state
    type: bool
    restore_value: yes
    initial_value: 'true'
- - id: counter_cold_value
-   type: float
-   restore_value: yes
-   initial_value: $init_cold
- - id: counter_hot_value
-   type: float
-   restore_value: yes
-   initial_value: $init_hot
-
-binary_sensor:
-  - platform: gpio
-    id: pulse_cold
-    pin: 
-      number: $pin_cold
-      mode: INPUT_PULLUP
-    filters:
-      - delayed_on: 1s
-      - delayed_off: 1s
-    on_press:
-      then:
-        - lambda: 'id(counter_cold_value) += 0.01;'
-  
-  - platform: gpio
-    id: pulse_hot
-    pin: 
-      number: $pin_hot
-      mode: INPUT_PULLUP
-    filters:
-      - delayed_on: 1s
-      - delayed_off: 1s
-    on_press:
-      then:
-        - lambda: 'id(counter_hot_value) += 0.01;'
 
 sensor:
   - platform: uptime
     name: "$upper_devicename Uptime"
-  
-  - platform: template
-    name: "counter_hot"
-    accuracy_decimals: 2
+#------------------------------------------------------------------------------    
+  - platform: wifi_signal # Уровень Wi-Fi сигнала положительным числом
+    name: "wifi_${devicename}"
+    update_interval: 60s 
+    filters:
+      - lambda: return x * (-1);  
+#------------------------------------------------------------------------------    
+  - platform: custom
     lambda: |-
-      return id(counter_hot_value);
-    update_interval: 60s
-  
-  - platform: template
-    name: "counter_cold"
-    accuracy_decimals: 2
-    lambda: |-
-      return id(counter_cold_value);
-    update_interval: 60s
+      auto my_sensor = new WaterCountersSensor();
+      App.register_component(my_sensor);
+      return {my_sensor->cold_sensor, my_sensor->hot_sensor};
+    sensors:
+      - name: "Counter Cold"
+        accuracy_decimals: 2
+      - name: "Counter Hot"
+        accuracy_decimals: 2
 
+#------------------------------------------------------------------------------    
 switch:
   - platform: gpio
     pin: 
       number: $water_open_pin
       inverted: yes
     id: water_open
-
   - platform: gpio
     pin: 
       number: $water_close_pin
       inverted: yes
     id: water_close
-  
   - platform: template
     name: "Water valve"
     icon: "mdi:cup-water"
@@ -123,12 +96,3 @@ switch:
       - delay: 5s
       - switch.turn_off: water_close
       - lambda: 'id(water_state) = false;'
-
-  - platform: template
-    name: "Reset"
-    turn_on_action:
-      - lambda: 'id(counter_cold_value) = 252.33;'
-      - lambda: 'id(counter_hot_value) = 122.29;'
-    turn_off_action:
-      - lambda: 'id(counter_cold_value) = 252.33;'
-      - lambda: 'id(counter_hot_value) = 122.29;'
