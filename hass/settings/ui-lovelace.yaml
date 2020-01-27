@@ -31,11 +31,11 @@ views:
           # - sensor.humidity_158d0001149b3c
           - sensor.xiaomi_airpurifier_air_quality_pm25
           - sensor.senseair_co2_value
-          # - light.yeelight_color1_34ce008fe328
-          # - light.yeelight_color1_286c071065c7
-          # - light.yeelight_mono1_34ce0087ff33
-          # - light.yeelight_mono1_f0b4290e5444
-          # - light.yeelight_mono1_f0b429a8f6df
+          - light.yeelight_color1_34ce008fe328
+          - light.yeelight_color1_286c071065c7
+          - light.yeelight_mono1_34ce0087ff33
+          - light.yeelight_mono1_f0b4290e5444
+          - light.yeelight_mono1_f0b429a8f6df
           # - light.salt_lamp
           # - cover.curtain_158d0002b0c46a
           # - switch.plug_158d0001104a0c
