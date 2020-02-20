@@ -7,4 +7,4 @@ then
         touch /mosquitto/passwd
         mosquitto_passwd -b /mosquitto/passwd $MQTT_USERNAME $MQTT_PASSWORD
 fi
-mosquitto -c /mosquitto/config/mosquitto.conf
+mosquitto -c /mosquitto/config/mosquitto.conf -v

@@ -31,22 +31,25 @@ views:
           # - sensor.humidity_158d0001149b3c
           - sensor.xiaomi_airpurifier_air_quality_pm25
           - sensor.senseair_co2_value
-          - light.yeelight_color1_34ce008fe328
           - light.yeelight_color1_286c071065c7
+          - light.yeelight_color1_34ce008fe328
           - light.yeelight_mono1_34ce0087ff33
           - light.yeelight_mono1_f0b4290e5444
           - light.yeelight_mono1_f0b429a8f6df
+          - light.yeelight_mono1_286c07f12bed
+          - light.yeelight_mono1_f0b429a8d936
+          - switch.fluxer_ceiling_lights
           # - light.salt_lamp
           # - cover.curtain_158d0002b0c46a
           # - switch.plug_158d0001104a0c
           # - switch.plug_158d00010dd98d
           - fan.xiaomi_miio_device
           # - climate.living_room
-      # - type: entities
-      #   title: "Кухня"
-      #   show_header_toggle: false
-      #   entities:
-      #     - light.kitchen
+      - type: entities
+        title: "Кухня"
+        show_header_toggle: false
+        entities:
+          - switch.light_kitchen
       #     - light.kitchen_mini_light
       #     - switch.plug_158d0001a68b18
       #     - switch.plug_158d0001a68c64
@@ -54,15 +57,15 @@ views:
       #     - switch.plug_158d00020f3a29
       #     - switch.plug_158d0002924779
       #     - switch.xiaomi_miio_switch
-      # - type: entities
-      #   title: "Ванная"
-      #   show_header_toggle: false
-      #   entities:
-      #     - sensor.temperature_158d00012d9ad7
-      #     - sensor.humidity_158d00012d9ad7
-      #     - light.bath
-      #     - light.philips_led
-      #     - sensor.airfresher_remain
+      - type: entities
+        title: "Ванная"
+        show_header_toggle: false
+        entities:
+          - switch.light_bath
+          - sensor.temperature_bath
+          - sensor.humidity_bath
+          # - light.philips_led
+          # - sensor.airfresher_remain
       - type: entities
         title: "Прихожая"
         show_header_toggle: false
@@ -72,17 +75,15 @@ views:
       #   title: "Балкон"
       #   show_header_toggle: false
       #   entities:
-      #     - light.yeelight_mono1_286c07f12bed
-      #     - light.yeelight_mono1_f0b429a8d936
       #     - sensor.temperature_158d000117d37a
       #     - sensor.humidity_158d000117d37a
       #     - switch.plug_158d00026ea017
-      # - type: entities
-      #   title: "Улица"
-      #   show_header_toggle: false
-      #   entities:
-      #     - sensor.temperature_158d000149c128
-      #     - sensor.humidity_158d000149c128
+      - type: entities
+        title: "Улица"
+        show_header_toggle: false
+        entities:
+          - sensor.temperature_outside
+          - sensor.humidity_outside
   - title: "Датчики"
     icon: mdi:nfc
     cards:
@@ -93,21 +94,29 @@ views:
           - binary_sensor.motion_sensor_bath
           - binary_sensor.motion_sensor_kitchen
           - binary_sensor.motion_sensor_hall
-  #     - type: entities
-  #       title: "Протечка"
-  #       show_header_toggle: false
-  #       entities:
-  #         - binary_sensor.water_leak_sensor_158d0001d594fa
-  #         - binary_sensor.water_leak_sensor_158d0001c34960
-  #         - binary_sensor.water_leak_sensor_158d0002150c07
-  #         - binary_sensor.water_leak_sensor_158d0002112b98
-  #         - binary_sensor.water_leak_sensor_158d0002113158
-  #         - binary_sensor.water_leak_sensor_158d00023a48f0
-  #     - type: entities
-  #       title: "Датчики дыма"
-  #       show_header_toggle: false
-  #       entities:
-  #         - binary_sensor.smoke_sensor_158d00023115ad
+      - type: entities # Фильтры воды
+        title: Фильтры воды
+        show_header_toggle: false
+        entities:
+          - sensor.raw_water_daily_single
+          - sensor.drink_water_daily_single
+          - type: divider
+          - sensor.raw_water_yesterday
+          - sensor.drink_water_yesterday
+          - type: divider
+          - sensor.raw_water_monthly_single
+          - sensor.drink_water_monthly_single
+          - type: divider      
+          - sensor.raw_water_yearly_single
+          - sensor.drink_water_yearly_single
+      - type: custom:auto-entities
+        card:
+          type: entities
+          title: "Протечка"
+          show_header_toggle: false
+        filter:
+          include:
+            - entity_id: "binary_sensor.water_leak_*"
       - type: entities
         title: "Двери"
         show_header_toggle: false
@@ -122,23 +131,31 @@ views:
           - sensor.counter_hot
           - sensor.counter_mosru_cold
           - sensor.counter_mosru_hot
-      - type: entities
+      - type: custom:auto-entities
         title: "Метки"
-        show_header_toggle: false
-        entities:
-          - sensor.tag_mamik_band
-          - sensor.tag_monster_nut
-          - sensor.tag_nut_blue
-          - sensor.tag_nut_white
-          - sensor.tag_nut_guest
+        card:
+          type: entities
+          show_header_toggle: false
+        filter:
+          include:
+            - entity_id: "sensor.tag*"
+      # - type: entities
+      #   title: "Метки"
+      #   show_header_toggle: false
+      #   entities:
+      #     - sensor.tag_mamik_band
+      #     - sensor.tag_monster_nut
+      #     - sensor.tag_nut_blue
+      #     - sensor.tag_nut_white
+      #     - sensor.tag_nut_guest
       - type: entities
         title: "Пристутствие"
         show_header_toggle: false
         entities:
+          - sensor.presence_home
           - sensor.presence_hall
           - sensor.presence_kitchen
           - sensor.presence_balcony
-          - sensor.toilet_presence
       - type: entities
         title: "Электропитание"
         show_header_toggle: false
@@ -153,14 +170,12 @@ views:
           - sensor.power_active_power
           - sensor.power_reactive_power
           - sensor.power_power_factor
-      - type: custom:auto-entities
-        card:
-          type: entities
-          title: Автоматика Свет
-          show_header_toggle: false
-        filter:
-          include:
-            - entity_id: "entity_controller.*"
+      - type: entities
+        title: "Электропитание"
+        show_header_toggle: false
+        entities:
+          - entity_controller.hall_light
+          - entity_controller.bath_light
   # - title: "Камеры"
   #   icon: mdi:cctv
   #   cards:
@@ -324,49 +339,48 @@ views:
   #       entities:
   #         - sensor.xiaomi_airpurifier_air_quality_pm25
   #         - sensor.senseair_co2_value
-  # - title: "Настройки"
-  #   icon: mdi:settings
-  #   cards:
-  #     - type: entities
-  #       title: "Контроль све\
-  #         та"
-  #       show_header_toggle: true
-  #       entities:
-  #         - input_boolean.mainroom_light_control
-  #         - input_boolean.hall_light_control
-  #         - input_boolean.bath_light_control
-  #         - input_boolean.kitchen_light_control
-  #         - input_boolean.balcony_light_control
-  #     - type: entities
-  #       title: "Настройки ав\
-  #         томатики"
-  #       show_header_toggle: true
-  #       entities:
-  #         - input_boolean.presence_control
-  #         - input_boolean.water_control
-  #         - input_boolean.water_leak_control
-  #         - input_boolean.mainroom_climate_control
-  #         - switch.domofon_automatically_open
-  #         - switch.domofon_automatically_open_once
-  #     - type: entities
-  #       title: "Настройки отчетов"
-  #       show_header_toggle: true
-  #       entities:
-  #         - input_boolean.security_sensors_report
-  #         - input_boolean.battery_report
-  #         - input_boolean.water_counters_report
-  #         - input_boolean.work_presence_report
-  #         - input_boolean.lock_report
-  #         - input_boolean.balance_report
-  #     - type: entities
-  #       title: "Метки"
-  #       show_header_toggle: true
-  #       entities:
-  #         - input_boolean.tag_mamik_band
-  #         - input_boolean.tag_monster_nut
-  #         - input_boolean.tag_nut_blue
-  #         - input_boolean.tag_nut_white
-  #         - input_boolean.tag_nut_guest
+  - title: "Настройки"
+    icon: mdi:settings
+    cards:
+      # - type: entities
+      #   title: "Контроль све\
+      #     та"
+      #   show_header_toggle: true
+      #   entities:
+      #     - input_boolean.mainroom_light_control
+      #     - input_boolean.hall_light_control
+      #     - input_boolean.bath_light_control
+      #     - input_boolean.kitchen_light_control
+      #     - input_boolean.balcony_light_control
+      # - type: entities
+      #   title: "Настройки ав\
+      #     томатики"
+      #   show_header_toggle: true
+      #   entities:
+      #     - input_boolean.presence_control
+      #     - input_boolean.water_control
+      #     - input_boolean.water_leak_control
+      #     - input_boolean.mainroom_climate_control
+      #     - switch.domofon_automatically_open
+      #     - switch.domofon_automatically_open_once
+      # - type: entities
+      #   title: "Настройки отчетов"
+      #   show_header_toggle: true
+      #   entities:
+      #     - input_boolean.security_sensors_report
+      #     - input_boolean.battery_report
+      #     - input_boolean.water_counters_report
+      #     - input_boolean.work_presence_report
+      #     - input_boolean.lock_report
+      #     - input_boolean.balance_report
+      - type: custom:auto-entities
+        title: "Метки"
+        card:
+          type: entities
+          show_header_toggle: false
+        filter:
+          include:
+            - entity_id: "input_boolean.tag*"
   #     - type: entities
   #       title: "Аптайм"
   #       show_header_toggle: false

@@ -4,7 +4,7 @@
     },
     "ble": {
         "channel": "home/presence",
-        "onlyIBeacon": false,
+        "onlyIBeacon": true,
         "updateFrequency": 0,
         "minorMask": "0xFFFF",
         "processIBeacon": true,

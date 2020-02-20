@@ -11,7 +11,9 @@ SocksPolicy accept *
 ## Logs go to stdout at level "notice"
 Log notice stdout
 
-ControlPort 9051
+ControlPort 0.0.0.0:9051
+# tor --hash-password myPwD
+HashedControlPassword 16:B1EC8A12CA8300DF606E7B4D315EC4EDB4E55B33A25C95A2FA457EB0A9
 
 # Try for at most NUM seconds when building circuits. If the circuit isn't open in that time, give up on it. (Default: 1 minute.)           
 CircuitBuildTimeout 5

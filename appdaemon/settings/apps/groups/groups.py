@@ -22,6 +22,9 @@ import re
 
 class Groups(hass.Hass):
   def initialize(self):
+    self.run_in(self.create_groups_timer, 10)
+
+  def create_groups_timer(self, kwargs):
     entitylist = []
 
     expand_group = self.args.get("expand_group", False)

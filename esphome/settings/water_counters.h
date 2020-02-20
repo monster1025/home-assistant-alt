@@ -25,6 +25,7 @@ class WaterCountersSensor : public Component, public Sensor, public CustomAPIDev
 	register_service(&WaterCountersSensor::on_set_counter_values, "set_counter_values",
 	                     {"cold_value", "hot_value"});
 
+    // init flash variables
     counter_cold_value = new globals::GlobalsComponent<float>();
     App.register_component(counter_cold_value);
     counter_cold_value->set_restore_value(1547432152);
@@ -57,7 +58,9 @@ class WaterCountersSensor : public Component, public Sensor, public CustomAPIDev
 			int value = CounterBouncer[i].read();
 			if ( value == LOW) {
 				ESP_LOGD(TAG, "Got counter %d 'tick'.", i);
+				ESP_LOGD(TAG, "Incrementing value. Old: %d", CounterValues[i]);
 				CounterValues[i] = CounterValues[i] + 10;
+				ESP_LOGD(TAG, "New: %d", CounterValues[i]);
 				sendCounterValue(i);
 				writeFile(i);
 				printState(i);
@@ -75,13 +78,6 @@ class WaterCountersSensor : public Component, public Sensor, public CustomAPIDev
   // --------------- HASS service call handling ----------------------------
   void on_set_counter_values(float cold_value, float hot_value) 
   {
-  	float prev_cold = counter_cold_value->value();
-  	float prev_hot = counter_hot_value->value();
-
-    ESP_LOGD(TAG, "Previous values: cold - %d, hot - %d; prev: %f, %f", 
-    		CounterValues[COUNTER_COLD], CounterValues[COUNTER_HOT],
-    		prev_cold, prev_hot);
-
     int cold_int = (int) (cold_value * 100.0);
     int hot_int = (int) (hot_value * 100.0);
     ESP_LOGD(TAG, "Saving values: cold - %d, hot - %d", cold_int, hot_int);
