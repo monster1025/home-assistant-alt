@@ -1,0 +1,10 @@
+# water_filter_tracking:
+#   class: Watchdog
+#   module: watchdog
+#   entities:
+#     - sensor.raw_water_daily_single
+#     - sensor.drink_water_daily_single
+#   check_interval: 60
+#   timeout: 180
+#   global_dependencies:
+#     - globals

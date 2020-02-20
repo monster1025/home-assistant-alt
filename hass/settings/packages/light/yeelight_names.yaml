@@ -1,0 +1,16 @@
+homeassistant:
+  customize:
+    light.yeelight_color1_286c071065c7:
+      friendly_name: Цветная 1
+    light.yeelight_color1_34ce008fe328:
+      friendly_name: Цветная 2
+    light.yeelight_mono1_286c07f12bed:
+      friendly_name: Моно 1
+    light.yeelight_mono1_34ce0087ff33:
+      friendly_name: Моно 2
+    light.yeelight_mono1_f0b4290e5444:
+      friendly_name: Моно 3
+    light.yeelight_mono1_f0b429a8d936:
+      friendly_name: Моно 4
+    light.yeelight_mono1_f0b429a8f6df:
+      friendly_name: Моно 5
