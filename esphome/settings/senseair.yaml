@@ -52,7 +52,6 @@ sensor:
     co2:
       id: co2_value
     update_interval: 5s
-
   - platform: template
     name: "SenseAir CO2 Value"
     lambda: |-
