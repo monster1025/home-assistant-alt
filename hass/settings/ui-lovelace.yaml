@@ -94,6 +94,7 @@ views:
           - binary_sensor.motion_sensor_bath
           - binary_sensor.motion_sensor_kitchen
           - binary_sensor.motion_sensor_hall
+          - binary_sensor.motion_sensor_kitchen2
       - type: entities # Фильтры воды
         title: Фильтры воды
         show_header_toggle: false
@@ -176,6 +177,7 @@ views:
         entities:
           - entity_controller.hall_light
           - entity_controller.bath_light
+          - entity_controller.kitchen_light
   # - title: "Камеры"
   #   icon: mdi:cctv
   #   cards:

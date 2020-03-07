@@ -13,7 +13,7 @@ light_button_bath:
 light_button_main:
   module: lightbutton
   class: LightButton
-  sensor: binary_sensor.switch_mainroom_light
+  sensor: sensor.bed_switch_state
   entities: light.yeelight_color1_34ce008fe328,light.yeelight_color1_286c071065c7,light.yeelight_mono1_34ce0087ff33,light.yeelight_mono1_f0b4290e5444,light.yeelight_mono1_f0b429a8f6df,light.yeelight_mono1_286c07f12bed,light.yeelight_mono1_f0b429a8d936
   global_dependencies:
     - globals

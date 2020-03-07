@@ -22,7 +22,9 @@ entity_controller:
       end_time: '06:00:00'                    # required
 
   kitchen_light:                                 # serves as a name
-    sensor: binary_sensor.motion_sensor_kitchen  # required, [sensors]
+    sensor: 
+      - binary_sensor.motion_sensor_kitchen  # required, [sensors]
+      - binary_sensor.motion_sensor_kitchen2
     entity: switch.light_kitchen              # required, [entity,entities]
     sensor_type: duration
     delay: 360                                # optional, overwrites default delay of 180s

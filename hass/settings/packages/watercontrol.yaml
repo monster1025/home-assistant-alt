@@ -1,0 +1,45 @@
+#################################################
+#                WATER                          #
+#################################################
+sensor:
+  - platform: mqtt
+    state_topic: 'home/watercontrol/bath/cold'
+    name: 'counter_cold'
+    value_template: '{{ (value | float ) / 1000 }}'
+    unit_of_measurement: 'm3'
+  - platform: mqtt
+    state_topic: 'home/watercontrol/bath/hot'
+    name: 'counter_hot'
+    value_template: '{{ (value | float ) / 1000 }}'
+    unit_of_measurement: 'm3'
+  - platform: mqtt
+    state_topic: 'home/watercontrol/bath/hot'
+    name: 'counter_hot'
+    value_template: '{{ (value | float ) / 1000 }}'
+    unit_of_measurement: 'm3'
+  - platform: mqtt
+    state_topic: 'home/watercontrol/$uptime'
+    name: 'uptime_watercontrol'
+    value_template: '{{ value | int }}'
+
+switch:
+  - platform: mqtt
+    name: water_valve
+    state_topic: "home/watercontrol/bath/valve"
+    command_topic: "home/watercontrol/bath/valve/set"
+    payload_on: "open"
+    payload_off: "close"
+    optimistic: false
+    retain: false
+
+script:
+  water_counter_set:
+    sequence:
+    - service: mqtt.publish
+      data:
+        topic: 'home/watercontrol/bath/cold/set'
+        payload: 258800
+    - service: mqtt.publish
+      data:
+        topic: 'home/watercontrol/bath/hot/set'
+        payload: 124690

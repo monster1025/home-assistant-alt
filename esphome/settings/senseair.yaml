@@ -52,11 +52,15 @@ sensor:
     co2:
       id: co2_value
     update_interval: 5s
+
   - platform: template
     name: "SenseAir CO2 Value"
     lambda: |-
       return id(co2_value).state;
     update_interval: 60s
+    accuracy_decimals: 1
+    unit_of_measurement: "ppm"
+    
   - platform: homeassistant
     id: temperature_outside
     entity_id: sensor.temperature_outside
