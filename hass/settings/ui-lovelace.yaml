@@ -354,46 +354,30 @@ views:
       #     - input_boolean.bath_light_control
       #     - input_boolean.kitchen_light_control
       #     - input_boolean.balcony_light_control
-      # - type: entities
-      #   title: "Настройки ав\
-      #     томатики"
-      #   show_header_toggle: true
-      #   entities:
-      #     - input_boolean.presence_control
-      #     - input_boolean.water_control
-      #     - input_boolean.water_leak_control
-      #     - input_boolean.mainroom_climate_control
-      #     - switch.domofon_automatically_open
-      #     - switch.domofon_automatically_open_once
-      # - type: entities
-      #   title: "Настройки отчетов"
-      #   show_header_toggle: true
-      #   entities:
-      #     - input_boolean.security_sensors_report
-      #     - input_boolean.battery_report
-      #     - input_boolean.water_counters_report
-      #     - input_boolean.work_presence_report
-      #     - input_boolean.lock_report
-      #     - input_boolean.balance_report
+      - type: entities
+        title: "Настройки автоматики"
+        show_header_toggle: true
+        entities:
+          - input_boolean.presence_control
+          - input_boolean.water_control
+          - input_boolean.water_leak_control
+      - type: entities
+        title: "Настройки отчетов"
+        show_header_toggle: true
+        entities:
+          - input_boolean.security_sensors_report
+          - input_boolean.battery_report
+          - input_boolean.water_counters_report
+          - input_boolean.balance_report
+          - input_boolean.watchdog_report
       - type: custom:auto-entities
-        title: "Метки"
         card:
           type: entities
+          title: "Метки"
           show_header_toggle: false
         filter:
           include:
             - entity_id: "input_boolean.tag*"
-  #     - type: entities
-  #       title: "Аптайм"
-  #       show_header_toggle: false
-  #       entities:
-  #         - sensor.airfresher_uptime
-  #         - sensor.watercontrol_uptime
-  #         - sensor.domofon_uptime
-  #         - sensor.uptime_kitchen_led
-  #         - sensor.uptime_nest
-  #         - sensor.uptime_bathlight
-  #         - sensor.uptime_kitchen
   - title: "Информация"
     icon: mdi:monitor-multiple
     cards:
@@ -413,3 +397,11 @@ views:
           - sensor.speedtest_ping
           - sensor.speedtest_download
           - sensor.speedtest_upload
+      - type: custom:auto-entities
+        card:
+          type: entities
+          title: "Аптайм"
+          show_header_toggle: false
+        filter:
+          include:
+            - entity_id: "sensor.uptime*"

@@ -1,0 +1,11 @@
+sensor:
+  - platform: "mqtt"
+    name: "uptime_sls"
+    state_topic: "ZigbeeBD0C/bridge/config"
+    value_template: "{{ value_json.Uptime }}"
+
+  - platform: "mqtt"
+    name: "sls_state"
+    state_topic: "ZigbeeBD0C/bridge/state"
+    value_template: "{{ value }}"
+    json_attributes_topic: "ZigbeeBD0C/bridge/config"

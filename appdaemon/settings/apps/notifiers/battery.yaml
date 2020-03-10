@@ -7,5 +7,6 @@ sensor_battery_low_report:
   constraint: input_boolean.battery_report
   always_send: 0
   threshold: 7
+  notify: telegram
   global_dependencies:
     - globals

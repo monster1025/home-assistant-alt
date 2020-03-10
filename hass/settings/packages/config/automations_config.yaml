@@ -1,0 +1,40 @@
+input_boolean:
+  presence_control:
+    name: Контроль присутствия (действия по уходу и приходу)
+    icon: mdi:account-off
+    initial: on
+
+  water_leak_control:
+    name: Контроль протечек
+    icon: mdi:water-off
+    initial: on
+
+  water_control:
+    name: Контроль подачи воды
+    icon: mdi:water-pump
+    initial: on  
+
+  security_sensors_report:
+    name: Охрана периметра при отсутствии
+    icon: mdi:access-point
+    initial: on
+
+  battery_report:
+    name: Отчет о состоянии батарей датчиков
+    icon: mdi:battery-charging-wireless-10
+    initial: on
+  
+  water_counters_report:
+    name: Отчет о поверке счетчиков
+    icon: mdi:alert-octagon
+    initial: on
+
+  balance_report:
+    name: Отчет о балансе
+    icon: mdi:alert-octagon
+    initial: on
+
+  watchdog_report:
+    name: Отчет watchdog
+    icon: mdi:lock-alert
+    initial: on

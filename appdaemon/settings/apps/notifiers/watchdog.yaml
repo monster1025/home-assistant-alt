@@ -1,10 +1,13 @@
-# water_filter_tracking:
-#   class: Watchdog
-#   module: watchdog
-#   entities:
-#     - sensor.raw_water_daily_single
-#     - sensor.drink_water_daily_single
-#   check_interval: 60
-#   timeout: 180
-#   global_dependencies:
-#     - globals
+uptime_watchdog:
+  class: Watchdog
+  module: watchdog
+  constraint: input_boolean.watchdog_report
+  entities:
+    - sensor.uptime_drink_filter
+    - sensor.uptime_sls
+    - sensor.uptime_watercontrol
+  check_interval: 60
+  timeout: 900
+  notify: telegram_monster
+  global_dependencies:
+    - globals

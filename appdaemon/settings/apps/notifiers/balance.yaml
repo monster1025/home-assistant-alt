@@ -10,6 +10,6 @@ balance_low_report:
     epd_balance: sensor.epd_balance
   always_send: 0
   threshold: -100
-  notify: telegram_monster
+  notify: telegram
   global_dependencies:
     - globals

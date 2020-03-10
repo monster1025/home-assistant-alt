@@ -117,23 +117,6 @@ services:
       options:
         max-size: 50m  
         
-  rass:
-    build:
-      context: ./rass/docker
-      dockerfile: Dockerfile
-    container_name: rass
-    network_mode: host
-    env_file: 
-      - ./mosquitto/settings/mqtt.env
-    volumes:
-      - ./rass/settings/local.json:/room-assistant/config/local.json
-    restart: always
-    logging:
-      driver: json-file
-      options:
-          max-size: "10m"
-          max-file: "5"
-
   happybubbles:
     build: 
       context: ./happybubbles/docker

@@ -10,7 +10,16 @@ class LightButton(hass.Hass):
 
     self.listen_event_handle_list = []
     self.listen_event_handle_list.append(self.listen_event(self.event_detected, "xiaomi_aqara.click"))
+    self.listen_event_handle_list.append(self.listen_state(self.state_change, self.args['sensor']))
 
+  def state_change(self, entity, attribute, old, new, kwargs):
+    if new == "single":
+      self.log('button_click')
+      self.make_action_by_mode("off")
+    if new == "double":
+      self.log('button_dblclick')
+      self.make_action_by_mode("on")
+    
   def event_detected(self, event_name, data, kwargs):
     if data["entity_id"] != self.args["sensor"] or self.isLocked:
       return
