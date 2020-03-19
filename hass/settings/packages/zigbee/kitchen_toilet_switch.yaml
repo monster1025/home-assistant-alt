@@ -1,0 +1,18 @@
+switch:
+  - platform: "mqtt"
+    name: light_bath
+    state_topic: "ZigbeeBD0C/kitchen_toilet_switch"
+    availability_topic: "ZigbeeBD0C/bridge/state"
+    payload_off: "OFF"
+    payload_on: "ON"
+    value_template: "{{ value_json.state_left }}"
+    command_topic: "ZigbeeBD0C/kitchen_toilet_switch/set/state_left"
+  
+  - platform: "mqtt"
+    name: light_kitchen
+    state_topic: "ZigbeeBD0C/kitchen_toilet_switch"
+    availability_topic: "ZigbeeBD0C/bridge/state"
+    payload_off: "OFF"
+    payload_on: "ON"
+    value_template: "{{ value_json.state_right }}"
+    command_topic: "ZigbeeBD0C/kitchen_toilet_switch/set/state_right"

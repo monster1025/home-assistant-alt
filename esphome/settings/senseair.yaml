@@ -64,6 +64,15 @@ sensor:
     id: temperature_outside
     entity_id: sensor.temperature_outside
 
+  - platform: bmp280
+    temperature:
+      name: "Mainroom Temperature"
+      oversampling: 16x
+    pressure:
+      name: "Mainroom Pressure"
+    address: 0x76
+    update_interval: 60s
+
 i2c:
   scl: D1
   sda: D2

@@ -1,5 +1,6 @@
 import appdaemon.plugins.hass.hassapi as hass
 import globals
+import time
 
 #
 # Home and away report
@@ -26,12 +27,26 @@ class PresenceAction(hass.Hass):
   def away_mode(self, event_id, event_args, kwargs):
     if 'constraint' in self.args and not self.constrain_input_boolean(self.args['constraint']):
       return
-    self.exec_command('стоп')
+    self.command('стоп')
 
   def return_home_mode(self, event_id, event_args, kwargs):
     if 'constraint' in self.args and not self.constrain_input_boolean(self.args['constraint']):
       return
-    self.exec_command('продолжить')
+    command = 'Добро пожаловать домой.'
+    coronaPeople = self.get_state('sensor.russia_coronavirus_confirmed')
+    if coronaPeople != None:
+    	command += "Сейчас в России {} заболевших коронавирусом.".format(coronaPeople)
+    self.run_in(self.run_in_say, 59, command=command)
 
-  def exec_command(self, command):
-    self.call_service('media_player/play_media', entity_id=self.args['alice'], media_content_type='command', media_content_id=command)
+  def run_in_say(self, kwargs):
+    if 'command' not in kwargs:
+      return
+    text = kwargs['command']
+    self.say(text)
+
+  def command(self, command):
+    self.call_service('yandex_station/send_command', command='sendText', text=command)
+
+  def say(self, command):
+    self.log('command = {}'.format(command))
+    self.call_service('media_player/play_media', entity_id=self.args['alice'], media_content_type='text', media_content_id=command)

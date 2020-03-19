@@ -31,6 +31,8 @@ views:
           # - sensor.humidity_158d0001149b3c
           - sensor.xiaomi_airpurifier_air_quality_pm25
           - sensor.senseair_co2_value
+          - sensor.mainroom_temperature2
+          - sensor.mainroom_pressure2
           - light.yeelight_color1_286c071065c7
           - light.yeelight_color1_34ce008fe328
           - light.yeelight_mono1_34ce0087ff33
@@ -71,6 +73,14 @@ views:
         show_header_toggle: false
         entities:
           - switch.plug_light_hall
+      - type: custom:auto-entities
+        card:
+          type: entities
+          title: "Коронавирус"
+          show_header_toggle: false
+        filter:
+          include:
+            - entity_id: "sensor.russia_coronavirus*"
       # - type: entities
       #   title: "Балкон"
       #   show_header_toggle: false
@@ -405,3 +415,17 @@ views:
         filter:
           include:
             - entity_id: "sensor.uptime*"
+      - type: entities
+        title: "zigbee2mqtt"
+        show_header_toggle: false
+        entities:
+          - switch.permit_join
+
+      - type: custom:auto-entities
+        card:
+          type: entities
+          title: "SLS"
+          show_header_toggle: false
+        filter:
+          include:
+            - entity_id: "sensor.sls*"

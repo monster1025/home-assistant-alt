@@ -27,6 +27,7 @@ class Watchdog(hass.Hass):
 
   def watchdog_check(self, kwargs):
     if 'constraint' in self.args and not self.constrain_input_boolean(self.args['constraint']):
+      self.log('disabled by constraint')
       return
     
     entities = []
