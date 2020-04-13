@@ -20,16 +20,8 @@ services:
      - SUBDOMAIN="home-alt"
    restart: always
   
-  ddns-otrs:
-   build: 
-    context: ./ddns/docker
-   env_file: ./ddns/settings/token.env
-   environment:
-     - SUBDOMAIN="otrs"
-   restart: always
-
   hass:
-    image: homeassistant/home-assistant:latest #0.100.3
+    image: homeassistant/home-assistant:dev
     container_name: hass
     volumes:
       - ./hass/settings:/config
@@ -104,7 +96,7 @@ services:
           max-file: "5"
 
   zigbee2mqtt:
-    image: koenkk/zigbee2mqtt:latest-dev
+    image: koenkk/zigbee2mqtt:latest
     container_name: zigbee2mqtt
     volumes:
       - ./zigbee2mqtt/settings:/app/data
@@ -116,7 +108,19 @@ services:
       driver: json-file
       options:
         max-size: 50m  
-        
+
+  zigbee2mqttAssistant:
+    image: carldebilly/zigbee2mqttassistant
+    container_name: zigbee2mqttAssistant
+    environment:
+      - Z2MA_SETTINGS__MQTTSERVER=192.168.1.6
+      - Z2MA_SETTINGS__MQTTUSERNAME=hass
+      - Z2MA_SETTINGS__MQTTPASSWORD=mqttpass
+      - TZ=Europe/Moscow
+    ports:
+      - 8880:80
+    restart: unless-stopped
+
   happybubbles:
     build: 
       context: ./happybubbles/docker

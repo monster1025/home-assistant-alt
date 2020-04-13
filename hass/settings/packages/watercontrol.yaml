@@ -13,11 +13,6 @@ sensor:
     value_template: '{{ (value | float ) / 1000 }}'
     unit_of_measurement: 'm3'
   - platform: mqtt
-    state_topic: 'home/watercontrol/bath/hot'
-    name: 'counter_hot'
-    value_template: '{{ (value | float ) / 1000 }}'
-    unit_of_measurement: 'm3'
-  - platform: mqtt
     state_topic: 'home/watercontrol/$uptime'
     name: 'uptime_watercontrol'
     value_template: '{{ value | int }}'

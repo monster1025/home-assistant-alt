@@ -12,5 +12,6 @@ tags_presence:
     - hall
     - balcony
     - kitchen
+    - mainroom
   global_dependencies:
     - globals

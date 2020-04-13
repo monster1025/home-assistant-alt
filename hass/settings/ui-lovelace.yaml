@@ -12,6 +12,7 @@ views:
         show_header_toggle: false
         entities:
           - alarm_control_panel.ha_alarm
+          - input_select.presence_extended 
           - switch.water_valve
           - vacuum.xiaomi_vacuum_cleaner
           # - switch.domofon_force_open
@@ -30,7 +31,7 @@ views:
           # - sensor.temperature_158d0001149b3c
           # - sensor.humidity_158d0001149b3c
           - sensor.xiaomi_airpurifier_air_quality_pm25
-          - sensor.senseair_co2_value
+          - sensor.senseair_co2_value_2
           - sensor.mainroom_temperature2
           - sensor.mainroom_pressure2
           - light.yeelight_color1_286c071065c7
@@ -354,16 +355,15 @@ views:
   - title: "Настройки"
     icon: mdi:settings
     cards:
-      # - type: entities
-      #   title: "Контроль све\
-      #     та"
-      #   show_header_toggle: true
-      #   entities:
-      #     - input_boolean.mainroom_light_control
-      #     - input_boolean.hall_light_control
-      #     - input_boolean.bath_light_control
-      #     - input_boolean.kitchen_light_control
-      #     - input_boolean.balcony_light_control
+      - type: entities
+        title: "Контроль света"
+        show_header_toggle: true
+        entities:
+          # - input_boolean.mainroom_light_control
+          - input_boolean.hall_light_control
+          # - input_boolean.bath_light_control
+          # - input_boolean.kitchen_light_control
+          # - input_boolean.balcony_light_control
       - type: entities
         title: "Настройки автоматики"
         show_header_toggle: true

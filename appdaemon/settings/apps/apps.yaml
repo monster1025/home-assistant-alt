@@ -4,6 +4,7 @@
 global_modules:
   - globals
   - automation
+  - notify
 
 automation:
   class: Automation

@@ -1,4 +1,5 @@
 modbus:
+  name: modbus_power
   type: serial
   method: rtu
   port: /dev/ttyUSB0
@@ -19,6 +20,7 @@ sensor:
     scan_interval: 30
     registers:
       - name: power_total
+        hub: modbus_power
         slave: 1
         register: 0
         count: 2
@@ -40,36 +42,42 @@ sensor:
       #   scale: 0.01
       #   unit_of_measurement: 'kWh'
       - name: power_voltage
+        hub: modbus_power
         slave: 1
         register: 12
         precision: 1
         scale: 0.1
         unit_of_measurement: 'V'
       - name: power_current
+        hub: modbus_power
         slave: 1
         register: 13
         precision: 2
         scale: 0.01
         unit_of_measurement: 'A'
       - name: power_active_power
+        hub: modbus_power
         slave: 1
         register: 14
         precision: 3
         scale: 0.001
         unit_of_measurement: 'KW'
       - name: power_reactive_power
+        hub: modbus_power
         slave: 1
         register: 15
         precision: 3
         scale: 0.001
         unit_of_measurement: 'Kvar'
       - name: power_power_factor
+        hub: modbus_power
         slave: 1
         register: 16
         precision: 3
         scale: 0.001
         unit_of_measurement: '%'
       - name: power_frequency
+        hub: modbus_power
         slave: 1
         register: 17
         precision: 2
