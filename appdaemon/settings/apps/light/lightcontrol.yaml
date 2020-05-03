@@ -3,7 +3,7 @@ light_control_hall:
   class: LightControl
   sensor: binary_sensor.motion_sensor_hall
   control_entity: switch.plug_light_hall
-  timeout: 120
+  timeout: 240
   constraint: input_boolean.hall_light_control
   ha_panel: alarm_control_panel.ha_alarm
   vacuum: vacuum.xiaomi_vacuum_cleaner

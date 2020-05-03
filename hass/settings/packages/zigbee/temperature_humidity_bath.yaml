@@ -13,3 +13,10 @@ sensor:
     device_class: "humidity"
     value_template: "{{ value_json.humidity }}"
     json_attributes_topic: "ZigbeeBD0C/temperature_humidity_bath"
+
+homeassistant:
+  customize:
+    sensor.temperature_bath:
+      friendly_name: Температура (Ванна)
+    sensor.humidity_bath:
+      friendly_name: Влажность (Ванна)

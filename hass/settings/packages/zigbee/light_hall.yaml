@@ -12,3 +12,8 @@ input_boolean:
   hall_light_control:
     name: Контроль света в прихожей
     initial: on
+
+homeassistant:
+  customize:
+    switch.plug_light_hall:
+      friendly_name: Свет прихожая

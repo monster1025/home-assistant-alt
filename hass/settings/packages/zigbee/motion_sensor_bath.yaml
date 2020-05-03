@@ -8,3 +8,8 @@ binary_sensor:
     payload_on: true
     payload_off: false
     json_attributes_topic: "ZigbeeBD0C/motion_sensor_bath"
+
+homeassistant:
+  customize:
+    binary_sensor.motion_sensor_bath:
+      friendly_name: Движение (Ванна)

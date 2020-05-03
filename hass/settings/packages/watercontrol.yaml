@@ -38,3 +38,8 @@ script:
       data:
         topic: 'home/watercontrol/bath/hot/set'
         payload: 124690
+
+homeassistant:
+  customize:
+    switch.water_valve:
+      friendly_name: Подача воды

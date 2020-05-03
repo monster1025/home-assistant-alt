@@ -21,7 +21,7 @@ services:
    restart: always
   
   hass:
-    image: homeassistant/home-assistant:dev
+    image: homeassistant/home-assistant:latest
     container_name: hass
     volumes:
       - ./hass/settings:/config
@@ -34,6 +34,7 @@ services:
       - "51827:51827" #Homekit
     devices:
       - "/dev/ttyUSB0:/dev/ttyUSB0"
+      - "/dev/ttyACM0:/dev/ttyACM0"
     depends_on:
     #  - mysql
      - mosquitto
