@@ -11,12 +11,6 @@ sensor:
     json_attributes_topic: "ZigbeeBD0C/bridge/config"
 
   - platform: "mqtt"
-    name: "sls_memoryUsage"
-    state_topic: "ZigbeeBD0C/bridge/config"
-    value_template: "{{ (value_json.memoryUsage | int) }}"
-    unit_of_measurement: 'b'
-
-  - platform: "mqtt"
     name: "sls_FreeMem"
     state_topic: "ZigbeeBD0C/bridge/config"
     value_template: "{{ (value_json.FreeMem | int) }}"
