@@ -19,7 +19,7 @@ from datetime import timedelta
 
 class AirQuality(hass.Hass):
   volume = 0.7
-  co2_max_level = 100
+  co2_max_level = 1000
   def initialize(self):
     if 'alice' not in self.args or 'co2_sensor' not in self.args or 'ha_panel' not in self.args:
       self.error("Please provide alice, co2_sensor, ha_panel in config!")
@@ -32,8 +32,10 @@ class AirQuality(hass.Hass):
       return
     home_state = self.get_state(self.args['ha_panel'])
     co2_value = int(float(self.get_state(self.args['co2_sensor'])))
-    if home_state == "disarmed" and self.time_is_between(self.datetime(), '08:00:00', '23:59:59') and co2_value > self.co2_max_level:
-      self.warn_air_quality(co2_value)
+    if home_state == "disarmed" and self.time_is_between(self.datetime(), '08:00:00', '23:59:59'):
+      self.log('co2 level: {}'.format(co2_value))
+      if co2_value > self.co2_max_level:
+        self.warn_air_quality(co2_value)
 
   def warn_air_quality(self, co2_value):
     commands=[
