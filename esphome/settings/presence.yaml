@@ -3,8 +3,8 @@
 # NodeMCU ESP8266
 #===============================================================================
 substitutions:
-  device_name: presence
-  upper_devicename: Presence
+  device_name: presence_hall
+  upper_devicename: PresenceHall
 #===============================================================================  
 esphome:
   name: ${device_name}

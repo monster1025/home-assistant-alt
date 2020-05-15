@@ -1,7 +1,7 @@
 #include "esphome.h"
 
-#define BLE_PIN D6
-String macs[] = { "f0fc392e5adb", "e7152ad8e7f2", "d0c71ff654ff", "e454c8a4b7ab", "eefb5e5c8719", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "" };
+#define BLE_PIN D1
+#define ROOM "hall"
 
 class MyCustomMQTTDevice : public Component, public CustomMQTTDevice {
 protected:
@@ -91,30 +91,6 @@ public:
         dtostrf(x, 0, precision, tmp);
         return String(tmp);
     }
-
-    void parseData()
-    {
-        publish("presence/raw", buf.c_str());
-        if (buf.length() < 128) {            
-            String mac = getValue(buf, '|', 1);
-
-            int arrLen = sizeof(macs) / sizeof(macs[0]);
-            for (int i = 0; i < arrLen; i++) {
-                if (mac.length() != 12 || (mac == macs[i] && macs[i] != "")) {
-                    String rssi = getValue(buf, '|', 2);
-                    float distance = calcDistance(rssi.toInt(), txPower);
-                    String data = "{\"id\":\"" + mac + "\", \"rssi\":\"" + rssi + "\", \"distance\":\"" + floatToString(distance, 5) + "\"}";
-                    Serial.println(data);
-
-                    publish("presence/room/hall", data.c_str());
-                    publish("presence/room/hall/raw", buf.c_str());
-                }
-            }
-        }
-    }
-
-    #define ibeacon_include_1 "0201"
-    #define ibeacon_include_2 "1aff4c0002"
 
     void process_serial(char *buf)
     {
@@ -313,29 +289,32 @@ public:
         }
 
         //os_printf("send some mqtt for mac %s =====%d===\n", ble_mac_addr, strlen(ble_mac_addr));
-        sendMQTTraw(ble_mac_addr, ble_rssi, ble_is_scan_resp, ble_type, ble_data);
+        // sendMQTTraw(ble_mac_addr, ble_rssi, ble_is_scan_resp, ble_type, ble_data);
     }
 
     // void sendMQTTeddystone(char *mac, char *namespace, char *instance_id, char *tx_power, char *rssi)
     // {
     //     return;
     // }
-    void sendMQTTibeacon(char * mac, char * uuid, char * major, char * minor, char * tx_power, char * rssi)
+    void sendMQTTibeacon(char* mac, char* uuid, char* major, char* minor, char* tx_power, char* rssi)
     {
+        float distance = calcDistance(atoi(rssi), 0x0b);
+        String distanceStr = floatToString(distance, 10);
+
         memset(json_ble_send, 0, 500);
-        os_sprintf(json_ble_send, "{\"hostname\": \"%s\",\"beacon_type\": \"ibeacon\",\"mac\": \"%s\",\"rssi\": %s,\"uuid\": \"%s\",\"major\": \"%s\",\"minor\": \"%s\",\"tx_power\": \"%s\"}", hostname, mac, rssi, uuid, major, minor, tx_power);
+        os_sprintf(json_ble_send, "{\"hostname\": \"%s\",\"beacon_type\": \"ibeacon\",\"id\": \"%s\",\"rssi\": %s,\"uuid\": \"%s\",\"major\": \"%s\",\"minor\": \"%s\",\"tx_power\": \"%s\", \"distance\": \"%s\"}", hostname, mac, rssi, uuid, major, minor, tx_power, distanceStr.c_str());
         memset(topic, 0, 130);
-        os_sprintf(topic, "happy-bubbles/ble/%s/ibeacon/%s", hostname, uuid);
+        os_sprintf(topic, "home/presence/%s", ROOM);
         publish(topic, json_ble_send);
     }
-    void sendMQTTraw(char * mac, char * rssi, char * is_scan, char * type, char * data)
-    {
-        memset(json_ble_send, 0, 500);
-        os_sprintf(json_ble_send, "{\"hostname\": \"%s\",\"mac\": \"%s\",\"rssi\": %s,\"is_scan_response\": \"%s\",\"type\": \"%s\",\r\n\"data\": \"%s\"}", hostname, mac, rssi, is_scan, type, data);
-        memset(topic, 0, 130);
-        os_sprintf(topic, "happy-bubbles/ble/%s/raw/%s", hostname, mac);
-        // publish(topic, json_ble_send);
-    }
+    // void sendMQTTraw(char * mac, char * rssi, char * is_scan, char * type, char * data)
+    // {
+    //     memset(json_ble_send, 0, 500);
+    //     os_sprintf(json_ble_send, "{\"hostname\": \"%s\",\"mac\": \"%s\",\"rssi\": %s,\"is_scan_response\": \"%s\",\"type\": \"%s\",\r\n\"data\": \"%s\"}", hostname, mac, rssi, is_scan, type, data);
+    //     memset(topic, 0, 130);
+    //     os_sprintf(topic, "happy-bubbles/ble/%s/raw/%s", hostname, mac);
+    //     // publish(topic, json_ble_send);
+    // }
 };
 
 class BleSwitch : public Component, public Switch {
@@ -343,12 +322,12 @@ public:
     void setup() override
     {
         // This will be called by App.setup()
-        pinMode(D6, OUTPUT);
+        pinMode(BLE_PIN, OUTPUT);
         write_state(true);
     }
     void write_state(bool state) override
     {
-        digitalWrite(D6, !state);
+        digitalWrite(BLE_PIN, !state);
         publish_state(state);
     }
 };

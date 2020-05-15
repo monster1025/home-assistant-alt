@@ -54,6 +54,7 @@ class AirQuality(hass.Hass):
   def say(self, command):
     volume = self.get_state(self.args['alice'], 'volume_level')
     state = self.get_state(self.args['alice'])
+    self.log('state: {}'.format(state))
 
     if state == "playing":
       self.call_service('media_player/media_pause', entity_id=self.args['alice'])
