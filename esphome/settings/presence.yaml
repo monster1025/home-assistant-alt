@@ -1,10 +1,11 @@
 #===============================================================================
-# Счетчик питьевой воды
+# Прошивка для пат Happy Bubbles
 # NodeMCU ESP8266
 #===============================================================================
 substitutions:
   device_name: presence_hall
   upper_devicename: PresenceHall
+  room: hall
 #===============================================================================  
 esphome:
   name: ${device_name}
@@ -46,16 +47,16 @@ mqtt:
 
 custom_component:
 - lambda: |-
-    auto my_custom = new MyCustomMQTTDevice();
-    App.register_component(my_custom);
-    return {my_custom};
+    auto hb = new HappyBubblesDevice("${room}");
+    App.register_component(hb);
+    return {hb};
 
 switch:
 - platform: custom
   lambda: |-
-    auto my_custom_switch = new BleSwitch();
-    App.register_component(my_custom_switch);
-    return {my_custom_switch};
+    auto ble_switch = new BleSwitch();
+    App.register_component(ble_switch);
+    return {ble_switch};
 
   switches:
     name: "Ble scan enable"

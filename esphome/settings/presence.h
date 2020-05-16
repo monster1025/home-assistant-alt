@@ -1,11 +1,11 @@
 #include "esphome.h"
 
 #define BLE_PIN D1
-#define ROOM "hall"
 
-class MyCustomMQTTDevice : public Component, public CustomMQTTDevice {
+class HappyBubblesDevice : public Component, public CustomMQTTDevice {
 protected:
-    char hostname[20] = "hall";
+    // char hostname[20] = "hall";
+    const char* hostname = "hall";
     String buf = "";
     int txPower = -59;
     char ble_mac_addr[13];
@@ -30,6 +30,9 @@ protected:
     } ble_tok_t;
 
 public:
+    HappyBubblesDevice(const char* host_param) {
+        hostname = host_param;
+    } 
     void setup() override
     {
         Serial.begin(115200);
@@ -298,13 +301,13 @@ public:
     // }
     void sendMQTTibeacon(char* mac, char* uuid, char* major, char* minor, char* tx_power, char* rssi)
     {
-        float distance = calcDistance(atoi(rssi), 0x0b);
+        float distance = calcDistance(atoi(rssi), 0x50);
         String distanceStr = floatToString(distance, 10);
 
         memset(json_ble_send, 0, 500);
         os_sprintf(json_ble_send, "{\"hostname\": \"%s\",\"beacon_type\": \"ibeacon\",\"id\": \"%s\",\"rssi\": %s,\"uuid\": \"%s\",\"major\": \"%s\",\"minor\": \"%s\",\"tx_power\": \"%s\", \"distance\": \"%s\"}", hostname, mac, rssi, uuid, major, minor, tx_power, distanceStr.c_str());
         memset(topic, 0, 130);
-        os_sprintf(topic, "home/presence/%s", ROOM);
+        os_sprintf(topic, "home/presence/%s", hostname);
         publish(topic, json_ble_send);
     }
     // void sendMQTTraw(char * mac, char * rssi, char * is_scan, char * type, char * data)

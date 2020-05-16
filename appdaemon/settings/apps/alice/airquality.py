@@ -73,7 +73,7 @@ class AirQuality(hass.Hass):
     self.call_service('media_player/volume_set', entity_id=self.args['alice'], volume_level=volume)
     if state == "playing":
       self.log('resuming')
-      self.call_service('media_player/media_play', entity_id=self.args['alice'])
+      # self.call_service('media_player/media_play', entity_id=self.args['alice'])
 
   def time_is_between(
           hass, target_dt: datetime, start_time: str,

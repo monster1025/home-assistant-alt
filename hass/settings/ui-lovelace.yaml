@@ -185,8 +185,6 @@ views:
         title: "Электропитание"
         show_header_toggle: false
         entities:
-          - entity_controller.hall_light
-          - entity_controller.bath_light
           - entity_controller.kitchen_light
   # - title: "Камеры"
   #   icon: mdi:cctv
