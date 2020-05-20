@@ -66,8 +66,19 @@ class PowerCounterSender(Automation):
     if today.day < 15 or today.day > 26:
         self.log("We can send power values between days 15 and 26.")
         return
+
     power_total = round(float(self.get_state(self.entity_ids['power_total'])))
     period = datetime.now().strftime('%Y-%m-%d')
+
+    if 'threshold' in self.args and 'power_mosenergosbyt_total' in self.args:
+      power_mosenergosbyt_total = float(self.get_state(self.args['power_mosenergosbyt_total']))
+      threshold = self.args['threshold']
+      diff = power_total-power_mosenergosbyt_total
+      if diff<threshold:
+        self.log('power_total: {}, power_mosenergosbyt_total: {}, diff: {}, threshold: {}'.format(power_total, power_mosenergosbyt_total, diff, threshold))
+        self.log('skipping send')
+        return
+
     self.log('Starting sending power counters value ({}) to mosru.'.format(power_total))
     new_values = [{'counter_id': 'T1', 'indication': power_total, 'period': period}]
     try:
@@ -140,6 +151,7 @@ class PowerCounterSensor(Automation):
   def update_sensors(self, args) -> None:
     self.log('Updating power counters')
     self.app.update_power()
+    self.log('power data: {}'.format(self.app._power_counters))
     if 'power_total' in self.entity_ids:
         power_total = self.app.power_total
         self.create_power_entity(self.entity_ids['power_total'], power_total, 'kWh', 'Счетчик')
