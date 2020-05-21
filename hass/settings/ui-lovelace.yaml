@@ -217,9 +217,18 @@ views:
   #       entities:
   #         - input_boolean.alarmclock_weekend
   #         - input_datetime.alarmclock_weekend
-  # - title: "Статистика"
-  #   icon: mdi:chart-areaspline
-  #   cards:
+  - title: "Статистика"
+    icon: mdi:chart-areaspline
+    cards:
+      - type: entities
+        title: "Белореченская"
+        show_header_toggle: false
+        entities:
+          - sensor.epd_balance_belorechenskaya
+          - sensor.counter_mosru_belorechenskaya_cold
+          - sensor.counter_mosru_belorechenskaya_hot
+          - sensor.power_mosenergosbyt_belorechenskaya_balance
+          - sensor.power_mosenergosbyt_belorechenskaya_total
   #     - type: entities
   #       title: "Электроэнергия"
   #       show_header_toggle: false

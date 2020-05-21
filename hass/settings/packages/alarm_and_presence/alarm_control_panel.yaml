@@ -1,4 +1,5 @@
 alarm_control_panel:
   - platform: manual
-    pending_time: 5
+    name: ha_alarm
+    delay_time: 5
     trigger_time: 5

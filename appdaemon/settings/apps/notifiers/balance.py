@@ -37,8 +37,11 @@ class Balance(Base):
       values[device] = balance
 
     message=""
+    name = "Алтуфьево"
+    if 'name' in self.args:
+    	name = self.args['name']
     if low:
-      message += "Пожалуйста пополните баланс: (< {}) \n".format(self.args["threshold"])
+      message += "Пожалуйста пополните баланс ({}): (< {}) \n".format(name, self.args["threshold"])
       for device in low:
         message += " - {}: {}\n".format(self.friendly_name(device), values[device])
       message += "\n\n"
