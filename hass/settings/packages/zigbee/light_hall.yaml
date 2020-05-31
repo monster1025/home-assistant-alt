@@ -2,7 +2,6 @@ switch:
   - platform: "mqtt"
     name: plug_light_hall
     state_topic: "ZigbeeBD0C/plug_light_hall"
-    availability_topic: "ZigbeeBD0C/bridge/state"
     payload_off: "OFF"
     payload_on: "ON"
     value_template: "{{ value_json.state }}"

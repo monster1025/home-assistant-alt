@@ -61,7 +61,7 @@ class TagsPresence(hass.Hass):
     for person in tags_by_person:
       if len(tags_by_person[person])>0 and tags_by_person[person] != 'not home':
         attr = self.get_state(person, attribute='all').get('attributes', None)
-        self.log(attr)
+        # self.log(attr)
         # attr['state'] = tags_by_person[person][0]
         self.set_state(person, state = tags_by_person[person][0], attributes = attr)
 
@@ -92,7 +92,7 @@ class TagsPresence(hass.Hass):
       person = '{}{}'.format(self.args['person_prefix'], tagName)
       person_state = self.get_state(person)
       if person_state != None:
-        self.log('{}: {}'.format(person, person_state))
+        # self.log('{}: {}'.format(person, person_state))
         if person not in tags_by_person:
             tags_by_person[person] = []
         tags_by_person[person].append(self.get_state(tag))
@@ -127,7 +127,7 @@ class TagsPresence(hass.Hass):
     current_state = self.get_state(entity_id)
     if (current_state == state):
       return
-    self.log('Updating {} state ({}->{})'.format(entity_id, current_state, state))
+    # self.log('Updating {} state ({}->{})'.format(entity_id, current_state, state))
     if attributes == None:
       attributes = {}
     attributes['description'] = 'Created and updated from appdaemon (tags_presence)'
