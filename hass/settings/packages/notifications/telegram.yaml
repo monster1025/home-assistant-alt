@@ -5,6 +5,7 @@ telegram_bot:
       - !secret telegram_group_chat
       - !secret telegram_monster_chat
       - !secret telegram_sveta_chat
+      - !secret telegram_card_chat
     proxy_url: !secret proxy_url
 
 notify:
@@ -19,4 +20,8 @@ notify:
   - platform: telegram
     name: telegram_sveta
     chat_id: !secret telegram_sveta_chat
+    parse_mode: html
+  - platform: telegram
+    name: telegram_card_chat
+    chat_id: !secret telegram_card_chat
     parse_mode: html

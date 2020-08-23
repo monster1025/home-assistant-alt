@@ -12,6 +12,7 @@ entities_action:
     - light.yeelight_mono1_f0b429a8f6df
     - light.yeelight_mono1_286c07f12bed
     - light.yeelight_mono1_f0b429a8d936
+    - light.lamp1
     - switch.light_bath
     - switch.light_kitchen
     - switch.plug_light_hall

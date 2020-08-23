@@ -10,7 +10,7 @@ class LightButton(hass.Hass):
 
     self.listen_event_handle_list = []
     self.listen_event_handle_list.append(self.listen_event(self.event_detected, "xiaomi_aqara.click"))
-    self.listen_event_handle_list.append(self.listen_state(self.state_change, self.args['sensor']))
+    self.listen_event_handle_list.append(self.listen_state(self.state_change, self.args['sensor'])) #, attribute='action'
 
   def state_change(self, entity, attribute, old, new, kwargs):
     if new == "single":
@@ -69,17 +69,18 @@ class LightButton(hass.Hass):
       self.log('turn_on {}'.format(entity_id))
       self.set_on(entity_id)
 
+  #light
   def set_on(self, entity_id):
     if entity_id.startswith("light") and 'color' in entity_id:
-      self.call_service("light/turn_on", entity_id = entity_id, transition = 1, brightness = 255, color_temp=204)
+      self.call_service("homeassistant/turn_on", entity_id = entity_id, transition = 1, brightness = 255, color_temp=204)
     elif entity_id.startswith("light"):
-      self.call_service("light/turn_on", entity_id = entity_id, transition = 1, brightness = 255)
+      self.call_service("homeassistant/turn_on", entity_id = entity_id, transition = 1, brightness = 255)
     else:
       self.turn_on(entity_id)
   
   def set_off(self, entity_id):
     if entity_id.startswith("light"):
-      self.call_service("light/turn_off", entity_id = entity_id, transition = 1)
+      self.call_service("homeassistant/turn_off", entity_id = entity_id, transition = 1)
     else:
       self.turn_off(entity_id)
 

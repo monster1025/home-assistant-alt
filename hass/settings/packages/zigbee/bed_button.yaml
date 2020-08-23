@@ -3,5 +3,6 @@ sensor:
     name: "bed_button"
     state_topic: "ZigbeeBD0C/bed_button"
     icon: "mdi:toggle-switch"
-    value_template: "{{ value_json.click }}"
+    value_template: "{{ value_json.action }}"
     json_attributes_topic: "ZigbeeBD0C/bed_button"
+

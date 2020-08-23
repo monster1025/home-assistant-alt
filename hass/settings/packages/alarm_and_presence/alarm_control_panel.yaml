@@ -3,3 +3,5 @@ alarm_control_panel:
     name: ha_alarm
     delay_time: 5
     trigger_time: 5
+    arming_time: 5
+    

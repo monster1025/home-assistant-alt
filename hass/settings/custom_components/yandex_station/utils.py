@@ -1,205 +1,68 @@
-import asyncio
-import json
 import logging
 import os
-import pickle
 import re
-from functools import lru_cache
-from ssl import SSLContext
-from typing import Optional
+import uuid
+from datetime import datetime
+from logging import Logger
 
-import requests
-import websockets
-from homeassistant.components.media_player import DOMAIN as DOMAIN_MP
-from homeassistant.helpers.entity_component import DATA_INSTANCES
-from websockets import ConnectionClosed
+from aiohttp import web
+from homeassistant.components.http import HomeAssistantView
+from homeassistant.helpers.typing import HomeAssistantType
 
 _LOGGER = logging.getLogger(__name__)
 
-# Thanks to https://github.com/MarshalX/yandex-music-api/
-CLIENT_ID = '23cabbbdc6cd418abb4b39c32c41195d'
-CLIENT_SECRET = '53bc75238f0c4d08a118e51fe9203300'
+# remove uiid, IP
+RE_PRIVATE = re.compile(
+    r"\b([a-z0-9]{20}|[A-Z0-9]{24}|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b")
+
+NOTIFY_TEXT = (
+    '<a href="%s" target="_blank">Открыть лог<a> | '
+    '[README](https://github.com/AlexxIT/YandexStation)')
+
+HTML = ('<!DOCTYPE html><html><head><title>YandexStation</title>'
+        '<meta http-equiv="refresh" content="%s"></head>'
+        '<body><pre>%s</pre></body></html>')
 
 
-def load_token(filename: str) -> Optional[str]:
-    if os.path.isfile(filename):
-        with open(filename, 'rt', encoding='utf-8') as f:
-            return f.read()
-    return None
+class YandexDebug(logging.Handler, HomeAssistantView):
+    name = "yandex_station_debug"
+    requires_auth = False
 
+    text = ''
 
-def save_token(filename: str, token: str):
-    with open(filename, 'w', encoding='utf-8') as f:
-        f.write(token)
+    def __init__(self, hass: HomeAssistantType, logger: Logger):
+        super().__init__()
 
+        logger.addHandler(self)
+        logger.setLevel(logging.DEBUG)
 
-def get_yandex_token(username: str, password: str) -> str:
-    r = requests.post('https://oauth.yandex.ru/token', data={
-        'grant_type': 'password',
-        'client_id': CLIENT_ID,
-        'client_secret': CLIENT_SECRET,
-        'username': username,
-        'password': password
-    }, headers={
-        'User-Agent': 'Yandex-Music-API',
-        'X-Yandex-Music-Client': 'WindowsPhone/3.20',
-    })
+        hass.loop.create_task(self.system_info(hass))
 
-    _LOGGER.debug(r.text)
-    return r.json()['access_token']
+        # random url because without authorization!!!
+        self.url = f"/{uuid.uuid4()}"
 
+        hass.http.register_view(self)
+        hass.components.persistent_notification.async_create(
+            NOTIFY_TEXT % self.url, title="YandexStation DEBUG")
 
-@lru_cache()
-def get_devices(yandex_token: str) -> dict:
-    r = requests.get('https://quasar.yandex.net/glagol/device_list',
-                     headers={'Authorization': f"Oauth {yandex_token}"})
-    _LOGGER.debug(r.text)
-    return r.json()['devices']
+    @staticmethod
+    async def system_info(hass):
+        info = await hass.helpers.system_info.async_get_system_info()
+        info.pop('installation_type', None)  # fix HA v0.109.6
+        info.pop('timezone')
+        _LOGGER.debug(f"SysInfo: {info}")
 
+    def handle(self, rec: logging.LogRecord) -> None:
+        dt = datetime.fromtimestamp(rec.created).strftime("%Y-%m-%d %H:%M:%S")
+        module = 'main' if rec.module == '__init__' else rec.module
+        # remove private data
+        msg = RE_PRIVATE.sub("...", str(rec.msg))
+        self.text += f"{dt}  {rec.levelname:7}  {module:13}  {msg}\n"
 
-class Glagol:
-    def __init__(self):
-        self._config = None
-        self.device_token = None
-        self.ws = None
-
-    def refresh_device_token(self):
-        _LOGGER.debug(f"Refresh device token {self._config['id']}")
-        r = requests.get('https://quasar.yandex.net/glagol/token', params={
-            'device_id': self._config['id'],
-            'platform': self._config['platform']
-        }, headers={'Authorization': f"Oauth {self._config['yandex_token']}"})
-        _LOGGER.debug(r.text)
-        self.device_token = r.json()['token']
-
-    async def run_forever(self):
-        while True:
-            _LOGGER.debug(f"Restart status loop {self._config['id']}")
-
-            if not self.device_token:
-                self.refresh_device_token()
-
-            uri = f"wss://{self._config['host']}:{self._config['port']}"
-            try:
-                self.ws = await websockets.connect(uri, ssl=SSLContext())
-                await self.ws.send(json.dumps({
-                    'conversationToken': self.device_token,
-                    'payload': {'command': 'subscribeStatus', 'interval': 1}
-                }))
-
-                while True:
-                    res = await self.ws.recv()
-                    await self.update(json.loads(res))
-
-            except ConnectionClosed as e:
-                if e.code == 4000:
-                    self.device_token = None
-                    continue
-                elif e.code == 4001:
-                    # no pong for long
-                    continue
-
-                _LOGGER.error(f"Station connect error: {e}")
-
-            except Exception as e:
-                _LOGGER.error(f"Station connect error: {e}")
-
-            await asyncio.sleep(30)
-
-    async def send_to_station(self, message: dict):
-        await self.ws.send(json.dumps({
-            'conversationToken': self.device_token,
-            'payload': message
-        }))
-
-    async def update(self, data: dict):
-        pass
-
-
-UA = "Mozilla/5.0 (Windows NT 10.0; rv:40.0) Gecko/20100101 Firefox/40.0"
-RE_CSRF = re.compile('"csrfToken2":"(.+?)"')
-
-
-class Quasar:
-    """Класс для работы с Квазар API. Авторизация через Яндекс.Паспорт и
-    сохранение сессии в куки.
-    """
-
-    def __init__(self, username: str, password: str, cookie_path: str):
-        self._username = username
-        self._password = password
-        self._cookie_path = cookie_path
-
-        self.session = requests.Session()
-        self.session.headers = {'User-Agent': UA}
-
-        self.load_cookies()
-
-    def load_cookies(self):
-        """Загружает куки из файла."""
-        if os.path.isfile(self._cookie_path):
-            with open(self._cookie_path, 'rb') as f:
-                cookies = pickle.loads(f.read())
-                self.session.cookies.update(cookies)
-
-    def save_cookies(self):
-        """Сохраняет куки в файл."""
-        with open(self._cookie_path, 'wb') as f:
-            pickle.dump(self.session.cookies, f)
-
-    def get_csrf_token(self) -> Optional[str]:
-        """Проверяет есть ли авторизация в Яндексе и если её нет -
-        авторизуется. Возвращает CSRF-токен, необходимый для POST-заросов.
-        """
-        r = self.session.get('https://quasar.yandex.ru/skills/')
-
-        if r.url.endswith('promo'):
-            _LOGGER.info("Login to Yandex Passport")
-
-            self.session.get('https://passport.yandex.ru/')
-            self.session.post('https://passport.yandex.ru/passport', params={
-                'mode': 'auth', 'retpath': 'https://yandex.ru'
-            }, data={
-                'login': self._username, 'passwd': self._password
-            })
-            r = self.session.get('https://quasar.yandex.ru/skills/')
-
-            self.save_cookies()
-
-        else:
-            _LOGGER.debug("Already login Yandex")
-
-        m = RE_CSRF.search(r.text)
-        if m:
-            _LOGGER.debug(f"CSRF Token: {m[1]}")
-            return m[1]
-        else:
-            _LOGGER.error("Can't get CSRF Token")
-            return None
-
-    def get_device_config(self, config: dict):
-        self.get_csrf_token()
-
-        r = self.session.get(
-            'https://quasar.yandex.ru/get_device_config',
-            params={'device_id': config['id'], 'platform': config['platform']})
-        _LOGGER.debug(r.text)
-
-        res = r.json()
-        if res.get('status') == 'error':
-            _LOGGER.error(res['message'])
-            return None
-        else:
-            return res['config']
-
-    def set_device_config(self, config: dict, quasar_config: dict):
-        csrf = self.get_csrf_token()
-        r = self.session.post(
-            'https://quasar.yandex.ru/set_device_config',
-            params={'device_id': config['id'], 'platform': config['platform']},
-            headers={'x-csrf-token': csrf},
-            json=quasar_config)
-        _LOGGER.debug(r.text)
+    async def get(self, request: web.Request):
+        reload = request.query.get('r', '')
+        return web.Response(text=HTML % (reload, self.text),
+                            content_type="text/html")
 
 
 def update_form(name: str, **kwargs):
@@ -220,15 +83,129 @@ def update_form(name: str, **kwargs):
     }
 
 
-def find_station(hass, device: str = None) -> Optional[str]:
+def find_station(devices: list, name: str = None):
     """Найти станцию по ID, имени или просто первую попавшуюся."""
-    from .media_player import YandexStation
-    for entity in hass.data[DATA_INSTANCES][DOMAIN_MP].entities:
-        if isinstance(entity, YandexStation):
-            if device:
-                if entity._config['id'] == device or \
-                        entity._config['name'] == device:
-                    return entity.entity_id
-            else:
-                return entity.entity_id
+    for device in devices:
+        if device.get('entity') and (device['device_id'] == name or
+                                     device['name'] == name or name is None):
+            return device['entity'].entity_id
     return None
+
+
+async def error(hass: HomeAssistantType, text: str):
+    _LOGGER.error(text)
+    hass.components.persistent_notification.async_create(
+        text, title="YandexStation ERROR")
+
+
+def clean_v1(hass_dir):
+    """Подчищаем за первой версией компонента."""
+    path = hass_dir.path('.yandex_station.txt')
+    if os.path.isfile(path):
+        os.remove(path)
+
+    path = hass_dir.path('.yandex_station_cookies.pickle')
+    if os.path.isfile(path):
+        os.remove(path)
+
+
+async def has_custom_icons(hass: HomeAssistantType):
+    # GUI off mode
+    if 'lovelace' not in hass.data:
+        return False
+
+    resources = hass.data['lovelace']['resources']
+    await resources.async_get_info()
+    for resource in resources.async_items():
+        if '/yandex-icons.js' in resource['url']:
+            return True
+    return False
+
+
+def play_video_by_descriptor(provider: str, item_id: str):
+    return {
+        'command': 'serverAction',
+        'serverActionEventPayload': {
+            'type': 'server_action',
+            'name': 'bass_action',
+            'payload': {
+                'data': {
+                    'video_descriptor': {
+                        'provider_item_id': item_id,
+                        'provider_name': provider
+                    }
+                },
+                'name': 'quasar.play_video_by_descriptor'
+            }
+        }
+    }
+
+
+RE_MEDIA = {
+    'youtube': re.compile(
+        r'https://(?:youtu\.be/|www\.youtube\.com/.+?v=)([0-9A-Za-z_-]{11})'),
+    'hd.kinopoisk': re.compile(
+        r'https://hd\.kinopoisk\.ru/(?:.*)([0-9a-z]{32})'),
+    'music.yandex.playlist': re.compile(
+        r'https://music\.yandex\.ru/users/(.+?)/playlists/(\d+)'),
+    'music.yandex': re.compile(
+        r'https://music\.yandex\.ru/(?:.*)(artist|track|album)/(\d+)'),
+    'kinopoisk': re.compile(
+        r'https?://www\.kinopoisk\.ru/film/(\d+)/')
+}
+
+
+async def get_media_payload(text: str, session):
+    for k, v in RE_MEDIA.items():
+        m = v.search(text)
+        if m:
+            if k == 'youtube':
+                return play_video_by_descriptor('youtube', m[1])
+
+            elif k == 'hd.kinopoisk':
+                return play_video_by_descriptor('kinopoisk', m[1])
+
+            elif k == 'music.yandex.playlist':
+                try:
+                    r = await session.get(
+                        'https://music.yandex.ru/handlers/library.jsx',
+                        params={'owner': m[1]})
+                    resp = await r.json()
+                    return {
+                        'command': 'playMusic',
+                        'type': 'playlist',
+                        'id': f"{resp['owner']['uid']}:{m[2]}",
+                    }
+
+                except:
+                    return None
+
+            elif k == 'music.yandex':
+                return {
+                    'command': 'playMusic',
+                    'type': m[1],
+                    'id': m[2],
+                }
+
+            elif k == 'kinopoisk':
+                try:
+                    r = await session.get(
+                        'https://ott-widget.kinopoisk.ru/ott/api/'
+                        'kp-film-status/', params={'kpFilmId': m[1]})
+                    resp = await r.json()
+                    return play_video_by_descriptor('kinopoisk', resp['uuid'])
+
+                except:
+                    return None
+
+    return None
+
+
+async def get_zeroconf_singleton(hass: HomeAssistantType):
+    try:
+        # Home Assistant 0.110.0 and above
+        from homeassistant.components.zeroconf import async_get_instance
+        return await async_get_instance(hass)
+    except:
+        from zeroconf import Zeroconf
+        return Zeroconf()

@@ -1,61 +1,97 @@
-import ipaddress
 import json
 import logging
-from typing import Callable
 
+import voluptuous as vol
 from homeassistant.components.media_player import ATTR_MEDIA_CONTENT_ID, \
     ATTR_MEDIA_CONTENT_TYPE, DOMAIN as DOMAIN_MP, SERVICE_PLAY_MEDIA
-from homeassistant.components.tts import ATTR_MESSAGE, \
-    DOMAIN as DOMAIN_TTS
-from homeassistant.const import CONF_USERNAME, CONF_PASSWORD, CONF_TOKEN, \
-    ATTR_ENTITY_ID
+from homeassistant.const import CONF_USERNAME, CONF_PASSWORD, ATTR_ENTITY_ID, \
+    EVENT_HOMEASSISTANT_STOP, CONF_TOKEN, CONF_INCLUDE, CONF_DEVICES, \
+    CONF_HOST, CONF_PORT
 from homeassistant.core import ServiceCall
-from homeassistant.helpers.discovery import load_platform
-from homeassistant.setup import setup_component
+from homeassistant.helpers import config_validation as cv, discovery
+from homeassistant.helpers.aiohttp_client import async_create_clientsession
+from homeassistant.helpers.typing import HomeAssistantType
 
-from zeroconf import ServiceBrowser, Zeroconf
 from . import utils
+from .yandex_glagol import YandexIOListener
+from .yandex_quasar import YandexQuasar
 
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'yandex_station'
 
+CONF_TTS_NAME = 'tts_service_name'
+CONF_INTENTS = 'intents'
+CONF_DEBUG = 'debug'
 
-def setup(hass, hass_config):
+CONFIG_SCHEMA = vol.Schema({
+    DOMAIN: vol.Schema({
+        vol.Optional(CONF_USERNAME): cv.string,
+        vol.Optional(CONF_PASSWORD): cv.string,
+        vol.Optional(CONF_TOKEN): cv.string,
+        vol.Optional(CONF_TTS_NAME, default='yandex_station_say'): cv.string,
+        vol.Optional(CONF_INTENTS): dict,
+        vol.Optional(CONF_INCLUDE): cv.ensure_list,
+        vol.Optional(CONF_DEVICES): {
+            cv.string: vol.Schema({
+                vol.Optional(CONF_HOST): cv.string,
+                vol.Optional(CONF_PORT, default=1961): cv.port,
+            }, extra=vol.ALLOW_EXTRA),
+        },
+        vol.Optional(CONF_DEBUG, default=False): cv.boolean,
+    }, extra=vol.ALLOW_EXTRA),
+}, extra=vol.ALLOW_EXTRA)
+
+
+async def async_setup(hass: HomeAssistantType, hass_config: dict):
     config: dict = hass_config[DOMAIN]
 
-    filename = hass.config.path(f".{DOMAIN}.txt")
+    # init debug if needed
+    if config[CONF_DEBUG]:
+        utils.YandexDebug(hass, _LOGGER)
 
-    if CONF_TOKEN in config:
-        yandex_token = config[CONF_TOKEN]
+    cachefile = hass.config.path(f".{DOMAIN}.json")
+
+    # нужна собственная сессия со своими кукисами
+    session = async_create_clientsession(hass)
+
+    quasar = YandexQuasar(session)
+
+    # если есть логин/пароль - запускаем облачное подключение
+    if CONF_USERNAME in config and CONF_PASSWORD in config:
+        speakers = await quasar.init(
+            config[CONF_USERNAME], config[CONF_PASSWORD], cachefile)
+
+    # если есть токен - то только локальное
+    elif CONF_TOKEN in config:
+        speakers = await quasar.load_local_speakers(config[CONF_TOKEN])
+
     else:
-        yandex_token = utils.load_token(filename)
-
-    if not yandex_token:
-        yandex_token = utils.get_yandex_token(config[CONF_USERNAME],
-                                              config[CONF_PASSWORD])
-        utils.save_token(filename, yandex_token)
-
-    if not yandex_token:
-        _LOGGER.error("Yandex token not found.")
+        await utils.error(hass, "Нужны либо логин/пароль, либо token")
         return False
 
-    devices = utils.get_devices(yandex_token)
+    if not speakers:
+        _LOGGER.debug("В аккаунте нет колонок")
 
-    _LOGGER.info(f"{len(devices)} device found in Yandex account.")
+    confdevices = config.get(CONF_DEVICES)
+    if confdevices:
+        for speaker in speakers:
+            did = speaker['device_id']
+            if did in confdevices:
+                speaker.update(confdevices[did])
+                if 'host' in speaker:
+                    await quasar.init_local(cachefile)
 
-    if config.get('control_hdmi'):
-        filename = hass.config.path(f".{DOMAIN}_cookies.pickle")
-        quasar = utils.Quasar(config[CONF_USERNAME], config[CONF_PASSWORD],
-                              filename)
-        hass.data[DOMAIN] = quasar
+    utils.clean_v1(hass.config)
+
+    # create send_command service
 
     async def send_command(call: ServiceCall):
         data = dict(call.data)
 
         device = data.pop('device', None)
-        entity_ids = data.pop(ATTR_ENTITY_ID, None) or \
-                     utils.find_station(hass, device)
+        entity_ids = (data.pop(ATTR_ENTITY_ID, None) or
+                      utils.find_station(speakers, device))
 
         _LOGGER.debug(f"Send command to: {entity_ids}")
 
@@ -64,17 +100,25 @@ def setup(hass, hass_config):
             return
 
         data = {
-            ATTR_MEDIA_CONTENT_ID: json.dumps(data),
-            ATTR_MEDIA_CONTENT_TYPE: 'command',
             ATTR_ENTITY_ID: entity_ids,
+            ATTR_MEDIA_CONTENT_ID: data.get('text'),
+            ATTR_MEDIA_CONTENT_TYPE: 'dialog',
+        } if data.get('command') == 'dialog' else {
+            ATTR_ENTITY_ID: entity_ids,
+            ATTR_MEDIA_CONTENT_ID: json.dumps(data),
+            ATTR_MEDIA_CONTENT_TYPE: 'json',
         }
 
-        await hass.services.async_call(
-            DOMAIN_MP, SERVICE_PLAY_MEDIA, data, blocking=True
-        )
+        await hass.services.async_call(DOMAIN_MP, SERVICE_PLAY_MEDIA, data,
+                                       blocking=True)
+
+    hass.services.async_register(DOMAIN, 'send_command', send_command)
+
+    # create TTS service
 
     async def yandex_station_say(call: ServiceCall):
-        entity_ids = call.data.get(ATTR_ENTITY_ID) or utils.find_station(hass)
+        entity_ids = (call.data.get(ATTR_ENTITY_ID) or
+                      utils.find_station(speakers))
 
         _LOGGER.debug(f"Yandex say to: {entity_ids}")
 
@@ -82,7 +126,7 @@ def setup(hass, hass_config):
             _LOGGER.error("Entity_id parameter required")
             return
 
-        message = call.data.get(ATTR_MESSAGE)
+        message = call.data.get('message')
 
         data = {
             ATTR_MEDIA_CONTENT_ID: message,
@@ -90,65 +134,91 @@ def setup(hass, hass_config):
             ATTR_ENTITY_ID: entity_ids,
         }
 
-        await hass.services.async_call(
-            DOMAIN_MP, SERVICE_PLAY_MEDIA, data, blocking=True
-        )
+        await hass.services.async_call(DOMAIN_MP, SERVICE_PLAY_MEDIA, data,
+                                       blocking=True)
 
-    def add_device(info: dict):
-        info['yandex_token'] = yandex_token
-        load_platform(hass, DOMAIN_MP, DOMAIN, info, hass_config)
+    hass.services.async_register('tts', config[CONF_TTS_NAME],
+                                 yandex_station_say)
 
-    hass.services.register(DOMAIN, 'send_command', send_command)
+    hass.data[DOMAIN] = {
+        'quasar': quasar,
+        'devices': speakers
+    }
 
-    if DOMAIN_TTS not in hass_config:
-        # need init tts service to show in media_player window
-        setup_component(hass, DOMAIN_TTS, hass_config)
+    # создаём все колонки при облачном подключении
+    if quasar.main_token:
+        # настраиваем все колонки в облачном режиме
+        for speaker in speakers:
+            info = {'device_id': speaker['device_id'], 'name': speaker['name'],
+                    'platform': speaker['platform']}
+            _LOGGER.debug(f"Инициализация: {info}")
 
-    service_name = config.get('tts_service_name', 'yandex_station_say')
-    hass.services.register(DOMAIN_TTS, service_name, yandex_station_say)
+            hass.async_create_task(discovery.async_load_platform(
+                hass, DOMAIN_MP, DOMAIN, speaker['device_id'], hass_config))
 
-    listener = YandexIOListener(devices)
-    listener.listen(add_device)
+        # создаём служебный медиаплеер
+        if CONF_INTENTS in config:
+            intents: dict = config[CONF_INTENTS]
+
+            hass.async_create_task(discovery.async_load_platform(
+                hass, DOMAIN_MP, DOMAIN, list(intents.keys()), hass_config))
+
+            if quasar.hass_id:
+                for i, intent in enumerate(intents.keys(), 1):
+                    try:
+                        await quasar.add_intent(intent, intents[intent], i)
+                    except:
+                        pass
+
+        # создаём устройства умного дома Яндекса (пока только кондеи)
+        if CONF_INCLUDE in config:
+            for device in quasar.devices:
+                if device['name'] not in config[CONF_INCLUDE]:
+                    continue
+
+                if device['type'] == 'devices.types.thermostat.ac':
+                    component = 'climate'
+                elif device['type'] == 'devices.types.other':
+                    component = 'remote'
+                else:
+                    _LOGGER.error(f"{device['name']} не поддерживается")
+                    continue
+
+                hass.async_create_task(discovery.async_load_platform(
+                    hass, component, DOMAIN, device, hass_config))
+
+    async def found_local_speaker(info: dict):
+        """Сообщение от Zeroconf (mDNS).
+
+        :param info: {device_id, platform, host, port}
+        """
+        _LOGGER.debug(f"mDNS: {info}")
+
+        await quasar.init_local(cachefile)
+
+        for speaker in speakers:
+            if info['device_id'] != speaker['device_id']:
+                continue
+
+            speaker['host'] = info['host']
+            speaker['port'] = info['port']
+
+            if 'entity' not in speaker:
+                hass.async_create_task(discovery.async_load_platform(
+                    hass, DOMAIN_MP, DOMAIN, speaker['device_id'],
+                    hass_config))
+
+            elif speaker['entity']:
+                await speaker['entity'].init_local_mode()
+
+            break
+
+    if speakers:
+        zeroconf = await utils.get_zeroconf_singleton(hass)
+
+        listener = YandexIOListener(hass.loop)
+        listener.start(found_local_speaker, zeroconf)
+
+        hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, listener.stop)
 
     return True
-
-
-class YandexIOListener:
-    def __init__(self, devices: dict):
-        self.devices = devices
-        self._add_device = None
-
-    def listen(self, add_device: Callable):
-        self._add_device = add_device
-
-        zeroconf = Zeroconf()
-        ServiceBrowser(zeroconf, '_yandexio._tcp.local.', listener=self)
-
-    def add_service(self, zeroconf: Zeroconf, type_: str, name: str):
-        """Стандартная функция ServiceBrowser."""
-        _LOGGER.debug(f"Add service {name}")
-
-        info = zeroconf.get_service_info(type_, name)
-
-        properties = {
-            k.decode(): v.decode() if isinstance(v, bytes) else v
-            for k, v in info.properties.items()
-        }
-
-        _LOGGER.debug(f"Properties: {properties}")
-
-        deviceid = properties['deviceId']
-
-        device = next((p for p in self.devices if p['id'] == deviceid), None)
-        if device:
-            _LOGGER.info(f"Found Yandex device {deviceid}")
-
-            device['host'] = str(ipaddress.ip_address(info.address))
-            device['port'] = info.port
-
-            self._add_device(device)
-        else:
-            _LOGGER.warning(f"Device {deviceid} not found in Yandex account.")
-
-    def remove_service(self, zeroconf: Zeroconf, type: str, name: str):
-        _LOGGER.debug(f"Remove service {name}")

@@ -34,7 +34,7 @@ services:
       - "51827:51827" #Homekit
     devices:
       - "/dev/ttyUSB0:/dev/ttyUSB0"
-      - "/dev/ttyACM0:/dev/ttyACM0"
+     # - "/dev/ttyACM0:/dev/ttyACM0"
     depends_on:
     #  - mysql
      - mosquitto

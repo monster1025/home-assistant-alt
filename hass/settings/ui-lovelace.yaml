@@ -41,6 +41,7 @@ views:
           - light.yeelight_mono1_f0b429a8f6df
           - light.yeelight_mono1_286c07f12bed
           - light.yeelight_mono1_f0b429a8d936
+          - light.lamp1
           # - light.salt_lamp
           # - cover.curtain_158d0002b0c46a
           # - switch.plug_158d0001104a0c

@@ -32,9 +32,8 @@ class Doorbell(hass.Hass):
     self.listen_state(self.sensor_trigger, self.args['sensor'])
 
   def sensor_trigger(self, entity, attribute, old, new, kwargs):
-    if new != "off":
-      return
-    self.log("doorbell call")
-    self.call_service("xiaomi_aqara/play_ringtone", gw_mac=self.gw_mac, ringtone_id=self.ringtone, ringtone_vol=100)
-    self.notify("Звонок в дверь!!!", name = self.args['notify'])
+    if new == "on":
+      self.log("doorbell call")
+      self.call_service("xiaomi_aqara/play_ringtone", gw_mac=self.gw_mac, ringtone_id=self.ringtone, ringtone_vol=100)
+      self.notify("Звонок в дверь!!!", name = self.args['notify'])
     # result = self.send_video()
