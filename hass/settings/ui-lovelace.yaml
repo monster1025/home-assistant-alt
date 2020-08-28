@@ -15,6 +15,7 @@ views:
           - input_select.presence_extended 
           - switch.water_valve
           - vacuum.xiaomi_vacuum_cleaner
+          - light.gateway
           # - switch.domofon_force_open
           # - switch.wifi_socket
           - type: custom:auto-entities
@@ -74,14 +75,6 @@ views:
         show_header_toggle: false
         entities:
           - switch.plug_light_hall
-      - type: custom:auto-entities
-        card:
-          type: entities
-          title: "Коронавирус"
-          show_header_toggle: false
-        filter:
-          include:
-            - entity_id: "sensor.russia_coronavirus*"
       # - type: entities
       #   title: "Балкон"
       #   show_header_toggle: false

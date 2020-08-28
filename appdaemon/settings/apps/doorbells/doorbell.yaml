@@ -4,7 +4,7 @@
 doorbell:
   module: doorbell
   class: Doorbell
-  sensor: binary_sensor.switch_doorbell
+  sensor: sensor.doorbell_button
   notify: telegram
   gw_mac: !secret aqara1_mac
   global_dependencies:

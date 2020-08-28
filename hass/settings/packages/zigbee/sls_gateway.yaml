@@ -26,3 +26,17 @@ sensor:
     name: "sls_permit_join"
     state_topic: "ZigbeeBD0C/bridge/config"
     value_template: "{{ value_json.permit_join }}"
+
+light:
+  - platform: mqtt
+    name: gateway
+    availability_topic: "ZigbeeBD0C/bridge/state"
+    command_topic: "ZigbeeBD0C/led"
+    rgb_command_topic: "ZigbeeBD0C/led"
+    rgb_command_template: >-
+      {
+        "mode": "manual",
+        "hex": "#{{ '%02x%02x%02x' | format(red, green, blue) }}"
+      }
+    on_command_type: "brightness"
+    payload_off: '{"mode": "off"}'
