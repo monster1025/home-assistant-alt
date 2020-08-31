@@ -1,6 +1,4 @@
-print("fired leak event")
-print(Event.State.Value)
-
+print("Water leak sensor state changed to " .. Event.State.Value)
 if Event.State.Value == "true" then
   mqtt.pub('home/watercontrol/bath/valve/set', 'close')
   audio.setvolume(100)
