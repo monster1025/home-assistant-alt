@@ -1,0 +1,1 @@
+mqtt.pub('home/yandexStation/say', 'ЭсЭлЭс перезагружен.')

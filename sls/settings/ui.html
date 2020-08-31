@@ -10,8 +10,8 @@
 
 <style>
    .leftpic2 {
-    float: left; /* ÐÑÑÐ°Ð²Ð½Ð¸Ð²Ð°Ð½Ð¸Ðµ Ð¿Ð¾ Ð¿ÑÐ°Ð²Ð¾Ð¼Ñ ÐºÑÐ°Ñ */
-    margin: 0 0 5px 5px; /* ÐÑÑÑÑÐ¿Ñ Ð²Ð¾ÐºÑÑÐ³ ÑÐ¾ÑÐ¾Ð³ÑÐ°ÑÐ¸Ð¸ */
+    float: left; /* Выравнивание по правому краю */
+    margin: 0 0 5px 5px; /* Отступы вокруг фотографии */
    }
   </style>
   
@@ -117,12 +117,12 @@ data += '<div class="panel panel-info" >';
    //if(typeof v.st.linkquality != 'undefined')    {data += '&nbsp;';}     else   {data += '&nbsp;<i class="fa fa-signal" title="'+v.st.linkquality+'"></i>'};
    //if(typeof v.st.linkquality === 'undefined')    {data += '&nbsp;';}     else   {data += '&nbsp;';'};
    //if ('linkquality' in v.st)  {data += '&nbsp;<i class="fa fa-signal" title="'+v.st.linkquality+'"></i>'} else {data += '&nbsp;';};
-   //if ('st' in v) {    if   ('temperature' in v['st'])  { $tem=v.st.temperature; data += '&nbsp;'+tem.replace(/\D+/g, '')+'Â°C'}   else {data += '&nbsp;';};   }
-   //if ('st' in v) {    if   ('temperature' in v['st'])  {data += '&nbsp;'+v.st.temperature.replace('/D/g', '')+'Â°C'}   else {data += '';};   }  arseInt(str.replace(/[^\d]/g, ''))
-   //if ('st' in v) {    if   ('temperature' in v['st'])  {data += '&nbsp;'+v.st.temperature+'Â°C'} )  
+   //if ('st' in v) {    if   ('temperature' in v['st'])  { $tem=v.st.temperature; data += '&nbsp;'+tem.replace(/\D+/g, '')+'°C'}   else {data += '&nbsp;';};   }
+   //if ('st' in v) {    if   ('temperature' in v['st'])  {data += '&nbsp;'+v.st.temperature.replace('/D/g', '')+'°C'}   else {data += '';};   }  arseInt(str.replace(/[^\d]/g, ''))
+   //if ('st' in v) {    if   ('temperature' in v['st'])  {data += '&nbsp;'+v.st.temperature+'°C'} )  
    
    if ('st' in v) {    if   ('state' in v['st']) {data += '&nbsp;'+v.st.state+''}   else {data += '&nbsp;';};   }
-   if ('st' in v) {    if   ('temperature' in v['st'])  {data += '&nbsp;'+v.st.temperature+'Â°C'}   else {data += '&nbsp;';};   }
+   if ('st' in v) {    if   ('temperature' in v['st'])  {data += '&nbsp;'+v.st.temperature+'°C'}   else {data += '&nbsp;';};   }
    if ('st' in v) {    if   ('humidity' in v['st'])  {data += '&nbsp;'+v.st.humidity+'mm'}   else {data += '';};   }
 
 data += '<div style="float:right;" >';
@@ -198,13 +198,13 @@ var xhr = new XMLHttpRequest();
 xhr.open('GET', url, false);
 xhr.send();
 if (xhr.status != 200) {
-  // Ð¾Ð±ÑÐ°Ð±Ð¾ÑÐ°ÑÑ Ð¾ÑÐ¸Ð±ÐºÑ
-  //console.log( xhr.status + ': ' + xhr.statusText ); // Ð¿ÑÐ¸Ð¼ÐµÑ Ð²ÑÐ²Ð¾Ð´Ð°: 404: Not Found
+  // обработать ошибку
+  //console.log( xhr.status + ': ' + xhr.statusText ); // пример вывода: 404: Not Found
   return false;
 } else {
-  // Ð²ÑÐ²ÐµÑÑÐ¸ ÑÐµÐ·ÑÐ»ÑÑÐ°Ñ
+  // вывести результат
   //console.log('nw request ok: ' + xhr.responseText);
-  return( xhr.responseText ); // responseText -- ÑÐµÐºÑÑ Ð¾ÑÐ²ÐµÑÐ°.
+  return( xhr.responseText ); // responseText -- текст ответа.
 } 
 }
 function httpReq(dev) {

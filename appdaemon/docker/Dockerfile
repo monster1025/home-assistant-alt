@@ -9,7 +9,8 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 # Download and build appdaemon, 4.0.0b2
-RUN git clone --branch=4.0.0b1 --recurse-submodules https://github.com/home-assistant/appdaemon.git .
+# --branch=4.0.0b1
+RUN git clone --recurse-submodules https://github.com/home-assistant/appdaemon.git .
 RUN pip3 install requests python-dateutil && pip install --upgrade pip .
 
 # Start script

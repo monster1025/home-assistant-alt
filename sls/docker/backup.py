@@ -41,6 +41,7 @@ def process_folder(path, slsIp, backupFolder):
             print(filePath)
 
             r = requests.get('http://{}/api/files?path={}'.format(slsIp, name))
+            r.encoding = 'utf-8'
             with open(filePath, 'w') as file:
                 file.write(r.text)
 

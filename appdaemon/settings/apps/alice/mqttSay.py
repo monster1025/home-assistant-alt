@@ -27,5 +27,5 @@ class MqttSay(mqtt.Mqtt, hass.Hass):
       self.call_service('yandex_station/send_command', command='sendText', text=command)
 
     def say(self, command):
-      self.call_service('media_player/volume_set', entity_id=self.args['alice'], volume_level=9)    
+      # self.call_service('media_player/volume_set', entity_id=self.args['alice'], volume_level=0.6)    
       self.call_service('media_player/play_media', entity_id=self.args['alice'], media_content_type='text', media_content_id=command)
