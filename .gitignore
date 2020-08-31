@@ -12,6 +12,8 @@
 *.env
 *.pickle
 
+sls/settings/config.json
+
 hass/settings/entity_registry.yaml
 hass/settings/secrets.yaml
 hass/settings/deps/*
