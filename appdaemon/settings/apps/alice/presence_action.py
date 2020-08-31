@@ -24,15 +24,6 @@ class PresenceAction(hass.Hass):
     self.listen_event(self.away_mode, "away_mode")
     self.listen_event(self.return_home_mode, "return_home_mode")
 
-    self.listen_state(self.sensor_trigger, 'sensor.russia_coronavirus_confirmed')
-
-  def sensor_trigger(self, entity, attribute, old, new, kwargs):
-    command = ""
-    coronaPeople = self.get_state('sensor.russia_coronavirus_confirmed')
-    if coronaPeople != None:
-      command += "Сейчас в России {} заболевших коронавирусом.".format(coronaPeople)
-    self.say(command)    
-
   def away_mode(self, event_id, event_args, kwargs):
     if 'constraint' in self.args and not self.constrain_input_boolean(self.args['constraint']):
       return
@@ -42,9 +33,6 @@ class PresenceAction(hass.Hass):
     if 'constraint' in self.args and not self.constrain_input_boolean(self.args['constraint']):
       return
     command = 'Добро пожаловать домой.'
-    coronaPeople = self.get_state('sensor.russia_coronavirus_confirmed')
-    if coronaPeople != None:
-    	command += "Сейчас в России {} заболевших коронавирусом.".format(coronaPeople)
     self.run_in(self.run_in_say, 59, command=command)
 
   def run_in_say(self, kwargs):

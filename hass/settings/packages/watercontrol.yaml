@@ -33,11 +33,11 @@ script:
     - service: mqtt.publish
       data:
         topic: 'home/watercontrol/bath/cold/set'
-        payload: 258800
+        payload: 285660
     - service: mqtt.publish
       data:
         topic: 'home/watercontrol/bath/hot/set'
-        payload: 124690
+        payload: 133700
 
 homeassistant:
   customize:
