@@ -16,8 +16,8 @@ _LOGGER = logging.getLogger(__name__)
 
 class Gateway3(Thread):
     devices: dict = None
-    updates: dict = None
-    setups: dict = None
+    updates: dict = {}
+    setups: dict = {}
 
     log = None
 
@@ -42,14 +42,10 @@ class Gateway3(Thread):
 
     def add_update(self, did: str, handler):
         """Add handler to device update event."""
-        if self.updates is None:
-            self.updates = {}
         self.updates.setdefault(did, []).append(handler)
 
     def add_setup(self, domain: str, handler):
         """Add hass device setup funcion."""
-        if self.setups is None:
-            self.setups = {}
         self.setups[domain] = handler
 
     def run(self):
@@ -134,9 +130,9 @@ class Gateway3(Thread):
                 for k, v in data.items():
                     if k in ('temperature', 'humidity'):
                         data[k] = v / 100.0
-                    elif v == 'on':
+                    elif v in ('on', 'open'):
                         data[k] = 1
-                    elif v == 'off':
+                    elif v in ('off', 'close'):
                         data[k] = 0
 
                 device['init'] = data
@@ -229,8 +225,8 @@ class Gateway3(Thread):
 
     def on_connect(self, client, userdata, flags, rc):
         _LOGGER.debug(f"{self.host} | MQTT connected")
-        # self.mqtt.subscribe('#')
-        self.mqtt.subscribe('zigbee/send')
+        self.mqtt.subscribe('#')
+        # self.mqtt.subscribe('zigbee/send')
 
     def on_disconnect(self, client, userdata, rc):
         _LOGGER.debug(f"{self.host} | MQTT disconnected")

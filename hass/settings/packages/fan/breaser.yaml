@@ -1,0 +1,6 @@
+fan:
+  - platform: xiaomi_airfresh
+    host: !secret breaser_ip
+    token: !secret breaser_token
+    name: AirFresh
+    model: dmaker.airfresh.a1

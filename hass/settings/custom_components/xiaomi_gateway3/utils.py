@@ -2,38 +2,8 @@ import logging
 from logging import FileHandler, Formatter
 from typing import Optional
 
-GLOBAL_PROP = {
-    '8.0.2001': 'battery',
-    '8.0.2002': 'reset_cnt',
-    '8.0.2003': 'send_all_cnt',
-    '8.0.2004': 'send_fail_cnt',
-    '8.0.2005': 'send_retry_cnt',
-    '8.0.2006': 'chip_temperature',
-    '8.0.2007': 'lqi',
-    '8.0.2008': 'voltage',
-    '8.0.2009': 'pv_state',
-    '8.0.2010': 'cur_state',
-    '8.0.2011': 'pre_state',
-    '8.0.2012': 'power_tx',
-    '8.0.2013': 'CCA',
-    '8.0.2014': 'protect',
-    '8.0.2015': 'power',
-    '8.0.2022': 'fw_ver',
-    '8.0.2023': 'hw_ver',
-    '8.0.2030': 'poweroff_memory',
-    '8.0.2031': 'charge_protect',
-    '8.0.2032': 'en_night_tip_light',
-    '8.0.2034': 'load_s0',  # ctrl_dualchn
-    '8.0.2035': 'load_s1',  # ctrl_dualchn
-    '8.0.2036': 'parent',
-    '8.0.2041': 'model',
-    '8.0.2042': 'max_power',
-    '8.0.2044': 'plug_detection',
-    '8.0.2101': 'nl_invert',  # ctrl_86plug
-    '8.0.9001': 'battery_end_of_life'
-}
-
 # https://github.com/Koenkk/zigbee-herdsman-converters/blob/master/devices.js#L390
+# https://slsys.io/action/devicelists.html
 # Zigbee Model: [Manufacturer, Device Name, Device Model]
 # params: [lumi res name, xiaomi prop name, hass attr name, hass domain]
 DEVICES = [{
@@ -62,6 +32,7 @@ DEVICES = [{
     'lumi.switch.b1nacn02': ["Aqara", "D1 Wall Single Switch", "QBKG23LM"],
     'params': [
         ['0.12.85', 'load_power', 'power', 'sensor'],
+        ['0.13.85', None, 'consumption', 'sensor'],
         ['4.1.85', 'neutral_0', 'switch', 'switch'],  # or channel_0?
     ]
 }, {
@@ -71,7 +42,10 @@ DEVICES = [{
     'lumi.ctrl_ln2.aq1': ["Aqara", "Wall Double Switch", "QBKG12LM"],
     'lumi.switch.b2nacn02': ["Aqara", "D1 Wall Double Switch", "QBKG24LM"],
     'params': [
+        # ['0.11.85', 'load_voltage', 'power', 'sensor'],  # 0
         ['0.12.85', 'load_power', 'power', 'sensor'],
+        ['0.13.85', None, 'consumption', 'sensor'],
+        # ['0.14.85', None, '?', 'sensor'],  # 5.01, 6.13
         ['4.1.85', 'channel_0', 'channel 1', 'switch'],
         ['4.2.85', 'channel_1', 'channel 2', 'switch'],
         # [?, 'enable_motor_mode', 'interlock', None]
@@ -107,6 +81,7 @@ DEVICES = [{
         # ['0.2.85', '?', '?', '?'],
         ['0.3.85', None, 'angle', None],
         ['13.1.85', None, 'action', 'sensor'],
+        ['8.0.2001', 'battery', 'battery', 'sensor'],
     ]
 }, {
     # light with brightness
@@ -130,6 +105,7 @@ DEVICES = [{
     'params': [
         ['13.1.85', None, 'button', None],
         [None, None, 'action', 'sensor'],
+        ['8.0.2001', 'battery', 'battery', 'sensor'],
     ]
 }, {
     # multi button action, no retain
@@ -149,6 +125,7 @@ DEVICES = [{
         ['13.6.85', None, 'button_5', None],
         ['13.7.85', None, 'button_6', None],
         [None, None, 'action', 'sensor'],
+        ['8.0.2001', 'battery', 'battery', 'sensor'],
     ]
 }, {
     # temperature and humidity sensor
@@ -156,6 +133,7 @@ DEVICES = [{
     'params': [
         ['0.1.85', 'temperature', 'temperature', 'sensor'],
         ['0.2.85', 'humidity', 'humidity', 'sensor'],
+        ['8.0.2001', 'battery', 'battery', 'sensor'],
     ]
 }, {
     # temperature, humidity and pressure sensor
@@ -165,19 +143,22 @@ DEVICES = [{
         ['0.1.85', 'temperature', 'temperature', 'sensor'],
         ['0.2.85', 'humidity', 'humidity', 'sensor'],
         ['0.3.85', 'pressure', 'pressure', 'sensor'],
+        ['8.0.2001', 'battery', 'battery', 'sensor'],
     ]
 }, {
     # door window sensor
     'lumi.sensor_magnet': ["Xiaomi", "Door Sensor", "MCCGQ01LM"],
     'lumi.sensor_magnet.aq2': ["Aqara", "Door Sensor", "MCCGQ11LM"],
     'params': [
-        ['3.1.85', 'status', 'occupancy', 'binary_sensor'],
+        ['3.1.85', 'status', 'contact', 'binary_sensor'],
+        ['8.0.2001', 'battery', 'battery', 'sensor'],
     ]
 }, {
     # motion sensor
     'lumi.sensor_motion': ["Xiaomi", "Motion Sensor", "RTCGQ01LM"],
     'params': [
         ['3.1.85', None, 'motion', 'binary_sensor'],
+        ['8.0.2001', 'battery', 'battery', 'sensor'],
     ]
 }, {
     # motion sensor with illuminance
@@ -185,6 +166,7 @@ DEVICES = [{
     'params': [
         ['0.4.85', 'illumination', 'illuminance', 'sensor'],
         ['3.1.85', None, 'motion', 'binary_sensor'],
+        ['8.0.2001', 'battery', 'battery', 'sensor'],
     ]
 }, {
     # water leak sensor
@@ -216,6 +198,37 @@ DEVICES = [{
         [None, None, 'motion', 'binary_sensor'],
     ]
 }]
+
+GLOBAL_PROP = {
+    '8.0.2001': 'battery',
+    '8.0.2002': 'reset_cnt',
+    '8.0.2003': 'send_all_cnt',
+    '8.0.2004': 'send_fail_cnt',
+    '8.0.2005': 'send_retry_cnt',
+    '8.0.2006': 'chip_temperature',
+    '8.0.2007': 'lqi',
+    '8.0.2008': 'voltage',
+    '8.0.2009': 'pv_state',
+    '8.0.2010': 'cur_state',
+    '8.0.2011': 'pre_state',
+    '8.0.2012': 'power_tx',
+    '8.0.2013': 'CCA',
+    '8.0.2014': 'protect',
+    '8.0.2015': 'power',
+    '8.0.2022': 'fw_ver',
+    '8.0.2023': 'hw_ver',
+    '8.0.2030': 'poweroff_memory',
+    '8.0.2031': 'charge_protect',
+    '8.0.2032': 'en_night_tip_light',
+    '8.0.2034': 'load_s0',  # ctrl_dualchn
+    '8.0.2035': 'load_s1',  # ctrl_dualchn
+    '8.0.2036': 'parent',
+    '8.0.2041': 'model',
+    '8.0.2042': 'max_power',
+    '8.0.2044': 'plug_detection',
+    '8.0.2101': 'nl_invert',  # ctrl_86plug
+    '8.0.9001': 'battery_end_of_life'
+}
 
 
 def get_device(zigbee_model: str) -> Optional[dict]:
