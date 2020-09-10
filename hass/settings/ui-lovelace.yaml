@@ -48,6 +48,7 @@ views:
           # - switch.plug_158d0001104a0c
           # - switch.plug_158d00010dd98d
           - fan.xiaomi_miio_device
+          - fan.airfresh
           # - climate.living_room
       - type: entities
         title: "Кухня"
