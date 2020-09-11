@@ -16,6 +16,9 @@ views:
           - switch.water_valve
           - vacuum.xiaomi_vacuum_cleaner
           - light.gateway
+          - sensor.danil_weight
+          - sensor.sveta_weight
+          - sensor.zmai_90_active_power
           # - switch.domofon_force_open
           # - switch.wifi_socket
           - type: custom:auto-entities
