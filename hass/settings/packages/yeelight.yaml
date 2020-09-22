@@ -1,0 +1,16 @@
+yeelight:
+  devices:
+    192.168.1.129:
+      name: yeelight_color1_286c071065c7
+    192.168.1.145:
+      name: yeelight_color1_34ce008fe328
+    192.168.1.53:
+      name: yeelight_mono1_34ce0087ff33
+    192.168.1.146:
+      name: yeelight_mono1_f0b4290e5444
+    192.168.1.163:
+      name: yeelight_mono1_f0b429a8f6df
+    192.168.1.238:
+      name: yeelight_mono1_286c07f12bed
+    192.168.1.243:
+      name: yeelight_mono1_f0b429a8d936

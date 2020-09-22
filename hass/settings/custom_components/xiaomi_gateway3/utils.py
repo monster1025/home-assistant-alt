@@ -1,6 +1,12 @@
 import logging
-from logging import FileHandler, Formatter
+import re
+import uuid
+from datetime import datetime
 from typing import Optional
+
+from aiohttp import web
+from homeassistant.components.http import HomeAssistantView
+from homeassistant.helpers.typing import HomeAssistantType
 
 # https://github.com/Koenkk/zigbee-herdsman-converters/blob/master/devices.js#L390
 # https://slsys.io/action/devicelists.html
@@ -27,6 +33,12 @@ DEVICES = [{
     'lumi.plug.maus01': ["Xiaomi", "Plug US", "ZNCZ12LM"],
     'lumi.ctrl_86plug': ["Aqara", "Socket", "QBCZ11LM"],
     'lumi.ctrl_86plug.aq1': ["Aqara", "Socket", "QBCZ11LM"],
+    'params': [
+        ['0.12.85', 'load_power', 'power', 'sensor'],
+        ['0.13.85', None, 'consumption', 'sensor'],
+        ['4.1.85', 'neutral_0', 'switch', 'switch'],  # or channel_0?
+    ]
+}, {
     'lumi.ctrl_ln1': ["Aqara", "Wall Single Switch", "QBKG11LM"],
     'lumi.ctrl_ln1.aq1': ["Aqara", "Wall Single Switch", "QBKG11LM"],
     'lumi.switch.b1nacn02': ["Aqara", "D1 Wall Single Switch", "QBKG23LM"],
@@ -34,6 +46,7 @@ DEVICES = [{
         ['0.12.85', 'load_power', 'power', 'sensor'],
         ['0.13.85', None, 'consumption', 'sensor'],
         ['4.1.85', 'neutral_0', 'switch', 'switch'],  # or channel_0?
+        ['13.1.85', None, 'action', 'sensor'],
     ]
 }, {
     # dual channel on/off, power measurement
@@ -49,6 +62,9 @@ DEVICES = [{
         ['4.1.85', 'channel_0', 'channel 1', 'switch'],
         ['4.2.85', 'channel_1', 'channel 2', 'switch'],
         # [?, 'enable_motor_mode', 'interlock', None]
+        ['13.1.85', None, 'button_1', None],
+        ['13.2.85', None, 'button_2', None],
+        [None, None, 'action', 'sensor'],
     ]
 }, {
     # on/off
@@ -56,39 +72,74 @@ DEVICES = [{
     'lumi.switch.b1lacn02': ["Aqara", "D1 Wall Single Switch", "QBKG21LM"],
     'params': [
         ['4.1.85', 'channel_0', 'switch', 'switch'],  # or neutral_0?
+        ['13.1.85', None, 'action', 'sensor'],
     ]
 }, {
     # dual channel on/off
     'lumi.ctrl_neutral2': ["Aqara", "Wall Double Switch", "QBKG03LM"],
-    'lumi.switch.b2lacn02': ["Aqara", "D1 Wall Single Switch", "QBKG22LM"],
+    'lumi.switch.b2lacn02': ["Aqara", "D1 Wall Double Switch", "QBKG22LM"],
     'params': [
         ['4.1.85', 'channel_0', 'channel 1', 'switch'],
         ['4.2.85', 'channel_1', 'channel 2', 'switch'],
+        ['13.1.85', None, 'button_1', None],
+        ['13.2.85', None, 'button_2', None],
+        [None, None, 'action', 'sensor'],
     ]
 }, {
-    # triple channel on/off
+    # triple channel on/off, no neutral wire
     'lumi.switch.l3acn3': ["Aqara", "D1 Wall Triple Switch", "QBKG25LM"],
     'params': [
         ['4.1.85', 'channel_0', 'channel 1', 'switch'],
         ['4.2.85', 'channel_1', 'channel 2', 'switch'],
         ['4.3.85', 'channel_2', 'channel 3', 'switch'],
+        ['13.1.85', None, 'button_1', None],
+        ['13.2.85', None, 'button_2', None],
+        ['13.3.85', None, 'button_3', None],
+        [None, None, 'action', 'sensor'],
+    ]
+}, {
+    # with neutral wire, thanks @Mantoui
+    'lumi.switch.n3acn3': ["Aqara", "D1 Wall Triple Switch", "QBKG26LM"],
+    'params': [
+        ['0.12.85', 'load_power', 'power', 'sensor'],
+        ['0.13.85', None, 'consumption', 'sensor'],
+        ['4.1.85', 'channel_0', 'channel 1', 'switch'],
+        ['4.2.85', 'channel_1', 'channel 2', 'switch'],
+        ['4.3.85', 'channel_2', 'channel 3', 'switch'],
+        ['13.1.85', None, 'button_1', None],
+        ['13.2.85', None, 'button_2', None],
+        ['13.3.85', None, 'button_3', None],
+        [None, None, 'action', 'sensor'],
     ]
 }, {
     # cube action, no retain
     'lumi.sensor_cube': ["Aqara", "Cube", "MFKZQ01LM"],
     'lumi.sensor_cube.aqgl01': ["Aqara", "Cube", "MFKZQ01LM"],  # tested
     'params': [
-        # ['0.2.85', '?', '?', '?'],
+        ['0.2.85', None, 'duration', None],
         ['0.3.85', None, 'angle', None],
         ['13.1.85', None, 'action', 'sensor'],
         ['8.0.2001', 'battery', 'battery', 'sensor'],
     ]
 }, {
-    # light with brightness
+    # light with brightness and color temp
     'lumi.light.aqcn02': ["Aqara", "Bulb", "ZNLDP12LM"],
     'lumi.light.cwopcn02': ["Aqara", "Opple MX650", "XDD12LM"],
     'lumi.light.cwopcn03': ["Aqara", "Opple MX480", "XDD13LM"],
-    'ikea.light.led1649c5': ["IKEA", "Bulb E14"],  # tested
+    'ikea.light.led1545g12': ["IKEA", "Bulb E27 980 lm", "LED1545G12"],
+    'ikea.light.led1546g12': ["IKEA", "Bulb E27 950 lm", "LED1546G12"],
+    'ikea.light.led1536g5': ["IKEA", "Bulb E14 400 lm", "LED1536G5"],
+    'ikea.light.led1537r6': ["IKEA", "Bulb GU10 400 lm", "LED1537R6"],
+    'params': [
+        ['4.1.85', 'power_status', 'light', 'light'],
+        ['14.1.85', 'light_level', 'brightness', None],
+        ['14.2.85', 'colour_temperature', 'color_temp', None],
+    ]
+}, {
+    # light with brightness
+    'ikea.light.led1623g12': ["IKEA", "Bulb E27 1000 lm", "LED1623G12"],
+    'ikea.light.led1650r5': ["IKEA", "Bulb GU10 400 lm", "LED1650R5"],
+    'ikea.light.led1649c5': ["IKEA", "Bulb E14", "LED1649C5"],  # tested
     'params': [
         ['4.1.85', 'power_status', 'light', 'light'],
         ['14.1.85', 'light_level', 'brightness', None],
@@ -173,17 +224,39 @@ DEVICES = [{
     'lumi.sensor_wleak.aq1': ["Aqara", "Water Leak Sensor", "SJCGQ11LM"],
     'params': [
         ['3.1.85', 'alarm', 'moisture', 'binary_sensor'],
+        ['8.0.2001', 'battery', 'battery', 'sensor'],
     ]
 }, {
     # vibration sensor
     'lumi.vibration.aq1': ["Aqara", "Vibration Sensor", "DJT11LM"],
     'params': [
         ['0.1.85', None, 'bed_activity', None],
-        ['0.2.85', None, 'final_tilt_angle', None],
+        ['0.2.85', None, 'tilt_angle', None],
         ['0.3.85', None, 'vibrate_intensity', None],
         ['13.1.85', None, 'vibration', None],
         ['14.1.85', None, 'vibration_level', None],
+        ['8.0.2001', 'battery', 'battery', 'sensor'],
         [None, None, 'action', 'sensor']
+    ]
+}, {
+    'lumi.sen_ill.mgl01': ["Xiaomi", "Light Sensor", "GZCGQ01LM"],
+    'params': [
+        ['2.1', '2.1', 'illuminance', 'sensor'],
+        ['3.1', '3.1', 'battery', 'sensor'],
+    ]
+}, {
+    'lumi.sensor_smoke': ["Honeywell", "Smoke Sensor", "JTYJ-GD-01LM/BW"],
+    'params': [
+        ['0.1.85', 'density', 'smoke density', 'sensor'],
+        ['13.1.85', 'alarm', 'smoke', 'binary_sensor'],
+        ['8.0.2001', 'battery', 'battery', 'sensor'],
+    ]
+}, {
+    'lumi.sensor_natgas': ["Honeywell", "Gas Sensor", "JTQJ-BF-01LM/BW"],
+    'params': [
+        ['0.1.85', 'density', 'gas density', 'sensor'],
+        ['13.1.85', 'alarm', 'gas', 'binary_sensor'],
+        ['8.0.2001', 'battery', 'battery', 'sensor'],
     ]
 }, {  # OTHER MANUFACTURERS
     'TRADFRI bulb E27 W opal 1000lm': ["IKEA", "Bulb E27"],
@@ -251,15 +324,46 @@ def get_device(zigbee_model: str) -> Optional[dict]:
     return None
 
 
-def get_logger(filename: str):
-    fmt = Formatter('%(asctime)s %(message)s')
+TITLE = "Xiaomi Gateway 3 Debug"
+NOTIFY_TEXT = '<a href="%s" target="_blank">Open Log<a>'
+HTML = (f'<!DOCTYPE html><html><head><title>{TITLE}</title>'
+        '<meta http-equiv="refresh" content="%s"></head>'
+        '<body><pre>%s</pre></body></html>')
 
-    hdlt = FileHandler(filename)
-    hdlt.setFormatter(fmt)
 
-    log = logging.getLogger('mqtt')
-    log.propagate = False
-    log.setLevel(logging.DEBUG)
-    log.addHandler(hdlt)
+class XiaomiGateway3Debug(logging.Handler, HomeAssistantView):
+    name = "sonoff_debug"
+    requires_auth = False
 
-    return log
+    text = ''
+
+    def __init__(self, hass: HomeAssistantType):
+        super().__init__()
+
+        # random url because without authorization!!!
+        self.url = f"/{uuid.uuid4()}"
+
+        hass.http.register_view(self)
+        hass.components.persistent_notification.async_create(
+            NOTIFY_TEXT % self.url, title=TITLE)
+
+    def handle(self, rec: logging.LogRecord) -> None:
+        dt = datetime.fromtimestamp(rec.created).strftime("%Y-%m-%d %H:%M:%S")
+        module = 'main' if rec.module == '__init__' else rec.module
+        self.text += f"{dt}  {rec.levelname:7}  {module:12}  {rec.msg}\n"
+
+    async def get(self, request: web.Request):
+        reload = request.query.get('r', '')
+
+        if 'q' in request.query:
+            try:
+                reg = re.compile(fr"({request.query['q']})", re.IGNORECASE)
+                body = '\n'.join([p for p in self.text.split('\n')
+                                  if reg.search(p)])
+            except:
+                return web.Response(status=500)
+        else:
+            body = self.text
+
+        return web.Response(text=HTML % (reload, body),
+                            content_type="text/html")

@@ -36,8 +36,8 @@ views:
           # - sensor.humidity_158d0001149b3c
           - sensor.xiaomi_airpurifier_air_quality_pm25
           - sensor.senseair_co2_value_2
-          - sensor.mainroom_temperature2
-          - sensor.mainroom_pressure2
+          - sensor.temperature_mainroom
+          - sensor.humidity_mainroom
           - light.yeelight_color1_286c071065c7
           - light.yeelight_color1_34ce008fe328
           - light.yeelight_mono1_34ce0087ff33
@@ -52,6 +52,7 @@ views:
           # - switch.plug_158d00010dd98d
           - fan.xiaomi_miio_device
           - fan.airfresh
+          - input_boolean.airfresh_ptc
           # - climate.living_room
       - type: entities
         title: "Кухня"
