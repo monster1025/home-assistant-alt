@@ -12,7 +12,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     def setup(gateway: Gateway3, device: dict, attr: str):
         async_add_entities([Gateway3Switch(gateway, device, attr)])
 
-    gw: Gateway3 = hass.data[DOMAIN][config_entry.unique_id]
+    gw: Gateway3 = hass.data[DOMAIN][config_entry.entry_id]
     gw.add_setup('switch', setup)
 
 
@@ -22,9 +22,8 @@ class Gateway3Switch(Gateway3Device, ToggleEntity):
         return self._state
 
     def update(self, data: dict = None):
-        if self._attr not in data:
-            return
-        self._state = data[self._attr] == 1
+        if self._attr in data:
+            self._state = data[self._attr] == 1
         self.schedule_update_ha_state()
 
     def turn_on(self):

@@ -36,10 +36,9 @@ services:
       - "/dev/ttyUSB0:/dev/ttyUSB0"
      # - "/dev/ttyACM0:/dev/ttyACM0"
     depends_on:
-    #  - mysql
      - mosquitto
      - tor
-    #  - broadlink
+     - influxdb
     network_mode: "host"
     restart: always
     healthcheck:
@@ -52,15 +51,6 @@ services:
       options:
         max-size: 50m
   
-  tor:
-   build: 
-    context: ./tor/docker
-   container_name: tor
-   ports:
-      - "9150:9150"
-      - "9051:9051" #control port
-   restart: always
-
   appdaemon:
     build:
       context: ./appdaemon/docker
@@ -79,6 +69,35 @@ services:
       options:
           max-size: "10m"
           max-file: "5"
+
+  influxdb:
+    image: influxdb:latest
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    env_file: ./influxdb/settings/settings.env
+    environment:
+      - INFLUXDB_DB=db0
+    volumes:
+      - ./influxdb/settings/data:/var/lib/influxdb
+    restart: always
+    logging:
+      driver: json-file
+      options:
+          max-size: "10m"
+          max-file: "5"
+
+  chronograf:
+    image: chronograf:latest
+    ports:
+      - '8888:8888'
+    volumes:
+      - ./influxdb/settings/chronograf:/var/lib/chronograf
+    depends_on:
+      - influxdb
+    env_file: ./influxdb/settings/settings.env
+    environment:
+      - INFLUXDB_URL=http://influxdb:8086
 
   esphome:
     image: esphome/esphome #esphome-armv7
@@ -166,11 +185,11 @@ services:
           max-size: "10m"
           max-file: "5"
 
-  mi-scale:
-    image: lolouk44/xiaomi-mi-scale:latest
-    container_name: mi-scale
-    restart: always
-
-    network_mode: host
-    privileged: true
-    env_file: ./mi-scale/settings/mi-scale.env
+  tor:
+   build: 
+    context: ./tor/docker
+   container_name: tor
+   ports:
+      - "9150:9150"
+      - "9051:9051" #control port
+   restart: always

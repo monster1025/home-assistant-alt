@@ -10,6 +10,8 @@ from homeassistant.helpers.typing import HomeAssistantType
 
 # https://github.com/Koenkk/zigbee-herdsman-converters/blob/master/devices.js#L390
 # https://slsys.io/action/devicelists.html
+# All lumi models:
+#   https://github.com/rytilahti/python-miio/issues/699#issuecomment-643208618
 # Zigbee Model: [Manufacturer, Device Name, Device Model]
 # params: [lumi res name, xiaomi prop name, hass attr name, hass domain]
 DEVICES = [{
@@ -32,11 +34,17 @@ DEVICES = [{
     'lumi.plug.mmeu01': ["Xiaomi", "Plug EU", "ZNCZ04LM"],
     'lumi.plug.maus01': ["Xiaomi", "Plug US", "ZNCZ12LM"],
     'lumi.ctrl_86plug': ["Aqara", "Socket", "QBCZ11LM"],
-    'lumi.ctrl_86plug.aq1': ["Aqara", "Socket", "QBCZ11LM"],
     'params': [
         ['0.12.85', 'load_power', 'power', 'sensor'],
         ['0.13.85', None, 'consumption', 'sensor'],
         ['4.1.85', 'neutral_0', 'switch', 'switch'],  # or channel_0?
+    ]
+}, {
+    'lumi.ctrl_86plug.aq1': ["Aqara", "Socket", "QBCZ11LM"],
+    'params': [
+        ['0.12.85', 'load_power', 'power', 'sensor'],
+        ['0.13.85', None, 'consumption', 'sensor'],
+        ['4.1.85', 'channel_0', 'switch', 'switch'],  # to4ko
     ]
 }, {
     'lumi.ctrl_ln1': ["Aqara", "Wall Single Switch", "QBKG11LM"],
@@ -77,6 +85,14 @@ DEVICES = [{
 }, {
     # dual channel on/off
     'lumi.ctrl_neutral2': ["Aqara", "Wall Double Switch", "QBKG03LM"],
+    'params': [
+        ['4.1.85', 'neutral_0', 'channel 1', 'switch'],  # to4ko
+        ['4.2.85', 'neutral_1', 'channel 2', 'switch'],
+        ['13.1.85', None, 'button_1', None],
+        ['13.2.85', None, 'button_2', None],
+        [None, None, 'action', 'sensor'],
+    ]
+}, {
     'lumi.switch.b2lacn02': ["Aqara", "D1 Wall Double Switch", "QBKG22LM"],
     'params': [
         ['4.1.85', 'channel_0', 'channel 1', 'switch'],
@@ -89,9 +105,9 @@ DEVICES = [{
     # triple channel on/off, no neutral wire
     'lumi.switch.l3acn3': ["Aqara", "D1 Wall Triple Switch", "QBKG25LM"],
     'params': [
-        ['4.1.85', 'channel_0', 'channel 1', 'switch'],
-        ['4.2.85', 'channel_1', 'channel 2', 'switch'],
-        ['4.3.85', 'channel_2', 'channel 3', 'switch'],
+        ['4.1.85', 'neutral_0', 'channel 1', 'switch'],  # to4ko
+        ['4.2.85', 'neutral_1', 'channel 2', 'switch'],
+        ['4.3.85', 'neutral_2', 'channel 3', 'switch'],
         ['13.1.85', None, 'button_1', None],
         ['13.2.85', None, 'button_2', None],
         ['13.3.85', None, 'button_3', None],
@@ -258,6 +274,24 @@ DEVICES = [{
         ['13.1.85', 'alarm', 'gas', 'binary_sensor'],
         ['8.0.2001', 'battery', 'battery', 'sensor'],
     ]
+}, {
+    'lumi.curtain': ["Aqara", "Curtain", "ZNCLDJ11LM"],
+    'lumi.curtain.aq2': ["Aqara", "Roller Shade", "ZNGZDJ11LM"],
+    'params': [
+        ['1.1.85', 'curtain_level', 'position', None],
+        ['14.2.85', None, 'motor', 'cover'],
+        ['14.3.85', 'cfg_param', 'cfg_param', None],
+        ['14.4.85', 'run_state', 'run_state', None],
+    ]
+}, {
+    'lumi.curtain.hagl04': ["Aqara", "B1 Curtain", "ZNCLDJ12LM"],
+    'params': [
+        ['1.1.85', 'curtain_level', 'position', None],
+        ['14.2.85', None, 'motor', 'cover'],
+        ['14.3.85', 'cfg_param', 'cfg_param', None],
+        ['14.4.85', 'run_state', 'run_state', None],
+        ['8.0.2001', 'battery', 'battery', 'sensor'],
+    ]
 }, {  # OTHER MANUFACTURERS
     'TRADFRI bulb E27 W opal 1000lm': ["IKEA", "Bulb E27"],
     'LWB010': ["Philips", "Hue Bulb E27"],
@@ -300,6 +334,7 @@ GLOBAL_PROP = {
     '8.0.2042': 'max_power',
     '8.0.2044': 'plug_detection',
     '8.0.2101': 'nl_invert',  # ctrl_86plug
+    '8.0.2102': 'alive',
     '8.0.9001': 'battery_end_of_life'
 }
 
@@ -322,6 +357,23 @@ def get_device(zigbee_model: str) -> Optional[dict]:
             }
 
     return None
+
+
+def fix_xiaomi_props(params) -> dict:
+    for k, v in params.items():
+        if k in ('temperature', 'humidity', 'pressure'):
+            params[k] = v / 100.0
+        elif v in ('on', 'open'):
+            params[k] = 1
+        elif v in ('off', 'close'):
+            params[k] = 0
+        elif k == 'battery' and v and v > 1000:
+            params[k] = round((min(v, 3200) - 2500) / 7)
+        elif k == 'run_state':
+            params[k] = ['offing', 'oning', 'stop',
+                         'hinder_stop'].index(v)
+
+    return params
 
 
 TITLE = "Xiaomi Gateway 3 Debug"

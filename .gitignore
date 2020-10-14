@@ -8,9 +8,12 @@
 *.db
 *.db-*
 
-#ignore env files with auth.data
+# ignore env files with auth.data
 *.env
 *.pickle
+
+# influx data
+influxdb/settings/data/*
 
 sls/settings/config.json
 

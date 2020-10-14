@@ -1,0 +1,19 @@
+influxdb:
+  host: !secret ha_internal_ip
+  port: 8086
+  username: admin
+  password: !secret influxdb_password
+  max_retries: 3
+  default_measurement: state
+  include:
+    domains:
+      - sensor
+      - binary_sensor
+    entities:
+      - sensor.bedroom_humidity
+      - sensor.bedroom_temperature
+  component_config_glob:
+    sensor.*humidity:
+      override_measurement: humidity
+    sensor.*temperature:
+      override_measurement: temperature
