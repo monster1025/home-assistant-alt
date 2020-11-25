@@ -1,0 +1,34 @@
+- id: '1606065844556'
+  alias: New Automation
+  description: ''
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: 313bedaded5359768194cb385454fa12
+    type: action
+    subtype: button_1_single
+    discovery_id: 0x00124b001f835180 action_button_1_single
+  condition: []
+  action:
+  - type: toggle
+    device_id: 3c506f1e2cce50e12b6cbe9aa32769b3
+    entity_id: switch.0x00158d00020f3a29_switch
+    domain: switch
+  mode: single
+- id: '1606065870254'
+  alias: New Automation
+  description: ''
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: 313bedaded5359768194cb385454fa12
+    type: action
+    subtype: button_1_single
+    discovery_id: 0x00124b001f835180 action_button_1_single
+  condition: []
+  action:
+  - type: toggle
+    device_id: 3c506f1e2cce50e12b6cbe9aa32769b3
+    entity_id: switch.0x00158d00020f3a29_switch
+    domain: switch
+  mode: single

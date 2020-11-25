@@ -2,7 +2,7 @@ modbus:
   name: modbus_power
   type: serial
   method: rtu
-  port: /dev/ttyUSB0
+  port: /dev/ttyUSB2
   baudrate: 9600
   stopbits: 1
   bytesize: 8

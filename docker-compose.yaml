@@ -33,7 +33,7 @@ services:
       - "4321:4321/udp"
       - "51827:51827" #Homekit
     devices:
-      - "/dev/ttyUSB0:/dev/ttyUSB0"
+      - "/dev/ttyUSB2:/dev/ttyUSB2"
      # - "/dev/ttyACM0:/dev/ttyACM0"
     depends_on:
      - mosquitto
@@ -71,33 +71,21 @@ services:
           max-file: "5"
 
   influxdb:
-    image: influxdb:latest
+    image: quay.io/influxdb/influxdb:v2.0.2
     container_name: influxdb
     ports:
       - "8086:8086"
     env_file: ./influxdb/settings/settings.env
     environment:
-      - INFLUXDB_DB=db0
+      - INFLUXDB_DB=home_assistant
     volumes:
-      - ./influxdb/settings/data:/var/lib/influxdb
+      - ./influxdb/settings/data:/root/.influxdbv2
     restart: always
     logging:
       driver: json-file
       options:
           max-size: "10m"
           max-file: "5"
-
-  chronograf:
-    image: chronograf:latest
-    ports:
-      - '8888:8888'
-    volumes:
-      - ./influxdb/settings/chronograf:/var/lib/chronograf
-    depends_on:
-      - influxdb
-    env_file: ./influxdb/settings/settings.env
-    environment:
-      - INFLUXDB_URL=http://influxdb:8086
 
   esphome:
     image: esphome/esphome #esphome-armv7
@@ -117,10 +105,12 @@ services:
   zigbee2mqtt:
     image: koenkk/zigbee2mqtt:latest
     container_name: zigbee2mqtt
+    ports:
+      - "8080:8080"
     volumes:
       - ./zigbee2mqtt/settings:/app/data
     devices:
-      - /dev/zigbee:/dev/ttyACM0
+      - /dev/ttyUSB0:/dev/ttyUSB0
     privileged: true
     restart: always
     logging:

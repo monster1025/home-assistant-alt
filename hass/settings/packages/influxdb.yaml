@@ -1,10 +1,16 @@
 influxdb:
+  api_version: 2
   host: !secret ha_internal_ip
   port: 8086
-  username: admin
-  password: !secret influxdb_password
-  max_retries: 3
+  ssl: false
+  token: !secret influxdb_token
+  organization: a951c0fc06eda0eb
+  bucket: home_assistant
   default_measurement: state
+  tags:
+    source: HA
+  tags_attributes:
+    - friendly_name
   include:
     domains:
       - sensor

@@ -36,6 +36,7 @@ views:
           # - sensor.humidity_158d0001149b3c
           - sensor.xiaomi_airpurifier_air_quality_pm25
           - sensor.senseair_co2_value_2
+          - sensor.mainroom_co2
           - sensor.temperature_mainroom
           - sensor.humidity_mainroom
           - light.yeelight_color1_286c071065c7

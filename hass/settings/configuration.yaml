@@ -20,6 +20,7 @@ http:
   use_x_forwarded_for: true
   trusted_proxies:
     - 172.19.0.0/24
+    - 172.18.0.0/24
 
 mobile_app:
 
