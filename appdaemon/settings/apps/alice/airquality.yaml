@@ -6,6 +6,6 @@ airquality:
   class: AirQuality
   alice: media_player.yandex_station
   ha_panel: alarm_control_panel.ha_alarm
-  co2_sensor: sensor.senseair_co2_value_2
+  co2_sensor: sensor.co2_mainroom_bed_co2
   global_dependencies:
     - globals

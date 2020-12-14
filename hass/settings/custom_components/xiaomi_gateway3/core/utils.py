@@ -2,11 +2,15 @@ import logging
 import re
 import uuid
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from aiohttp import web
 from homeassistant.components.http import HomeAssistantView
+from homeassistant.helpers.device_registry import DeviceRegistry
+from homeassistant.helpers.entity_registry import EntityRegistry
 from homeassistant.helpers.typing import HomeAssistantType
+
+DOMAIN = 'xiaomi_gateway3'
 
 # https://github.com/Koenkk/zigbee-herdsman-converters/blob/master/devices.js#L390
 # https://slsys.io/action/devicelists.html
@@ -14,9 +18,12 @@ from homeassistant.helpers.typing import HomeAssistantType
 #   https://github.com/rytilahti/python-miio/issues/699#issuecomment-643208618
 # Zigbee Model: [Manufacturer, Device Name, Device Model]
 # params: [lumi res name, xiaomi prop name, hass attr name, hass domain]
+# old devices uses params, new devices uses mi_spec
 DEVICES = [{
     'lumi.gateway.mgl03': ["Xiaomi", "Gateway 3", "ZNDMWG03LM"],
     'params': [
+        ['8.0.2012', None, 'power_tx', None],
+        ['8.0.2024', None, 'channel', None],
         ['8.0.2081', None, 'pairing_stop', None],
         ['8.0.2082', None, 'removed_did', None],
         ['8.0.2084', None, 'added_device', None],  # new devices added (info)
@@ -26,6 +33,7 @@ DEVICES = [{
         ['8.0.2111', None, 'pair_command', None],  # add new device
         ['8.0.2155', None, 'cloud', None],  # {"cloud_link":0}
         [None, None, 'pair', 'remote'],
+        [None, None, 'firmware lock', 'switch'],  # firmware lock
     ]
 }, {
     # on/off, power measurement
@@ -34,6 +42,7 @@ DEVICES = [{
     'lumi.plug.mmeu01': ["Xiaomi", "Plug EU", "ZNCZ04LM"],
     'lumi.plug.maus01': ["Xiaomi", "Plug US", "ZNCZ12LM"],
     'lumi.ctrl_86plug': ["Aqara", "Socket", "QBCZ11LM"],
+    # 'lumi.plug.maeu01': ["Aqara", "Plug EU", "SP-EUC01"],
     'params': [
         ['0.12.85', 'load_power', 'power', 'sensor'],
         ['0.13.85', None, 'consumption', 'sensor'],
@@ -54,7 +63,8 @@ DEVICES = [{
         ['0.12.85', 'load_power', 'power', 'sensor'],
         ['0.13.85', None, 'consumption', 'sensor'],
         ['4.1.85', 'neutral_0', 'switch', 'switch'],  # or channel_0?
-        ['13.1.85', None, 'action', 'sensor'],
+        ['13.1.85', None, 'button', None],
+        [None, None, 'action', 'sensor'],
     ]
 }, {
     # dual channel on/off, power measurement
@@ -72,6 +82,7 @@ DEVICES = [{
         # [?, 'enable_motor_mode', 'interlock', None]
         ['13.1.85', None, 'button_1', None],
         ['13.2.85', None, 'button_2', None],
+        ['13.5.85', None, 'button_both', None],
         [None, None, 'action', 'sensor'],
     ]
 }, {
@@ -80,7 +91,8 @@ DEVICES = [{
     'lumi.switch.b1lacn02': ["Aqara", "D1 Wall Single Switch", "QBKG21LM"],
     'params': [
         ['4.1.85', 'channel_0', 'switch', 'switch'],  # or neutral_0?
-        ['13.1.85', None, 'action', 'sensor'],
+        ['13.1.85', None, 'button', None],
+        [None, None, 'action', 'sensor'],
     ]
 }, {
     # dual channel on/off
@@ -90,6 +102,7 @@ DEVICES = [{
         ['4.2.85', 'neutral_1', 'channel 2', 'switch'],
         ['13.1.85', None, 'button_1', None],
         ['13.2.85', None, 'button_2', None],
+        ['13.5.85', None, 'button_both', None],
         [None, None, 'action', 'sensor'],
     ]
 }, {
@@ -99,6 +112,7 @@ DEVICES = [{
         ['4.2.85', 'channel_1', 'channel 2', 'switch'],
         ['13.1.85', None, 'button_1', None],
         ['13.2.85', None, 'button_2', None],
+        ['13.5.85', None, 'button_both', None],
         [None, None, 'action', 'sensor'],
     ]
 }, {
@@ -111,6 +125,9 @@ DEVICES = [{
         ['13.1.85', None, 'button_1', None],
         ['13.2.85', None, 'button_2', None],
         ['13.3.85', None, 'button_3', None],
+        ['13.5.85', None, 'button_both_12', None],
+        ['13.6.85', None, 'button_both_13', None],
+        ['13.7.85', None, 'button_both_23', None],
         [None, None, 'action', 'sensor'],
     ]
 }, {
@@ -125,6 +142,9 @@ DEVICES = [{
         ['13.1.85', None, 'button_1', None],
         ['13.2.85', None, 'button_2', None],
         ['13.3.85', None, 'button_3', None],
+        ['13.5.85', None, 'button_both_12', None],
+        ['13.6.85', None, 'button_both_13', None],
+        ['13.7.85', None, 'button_both_23', None],
         [None, None, 'action', 'sensor'],
     ]
 }, {
@@ -188,9 +208,9 @@ DEVICES = [{
         ['13.2.85', None, 'button_2', None],
         ['13.3.85', None, 'button_3', None],
         ['13.4.85', None, 'button_4', None],
-        ['13.5.85', None, 'button_both', None],
         ['13.6.85', None, 'button_5', None],
         ['13.7.85', None, 'button_6', None],
+        ['13.5.85', None, 'button_both', None],
         [None, None, 'action', 'sensor'],
         ['8.0.2001', 'battery', 'battery', 'sensor'],
     ]
@@ -256,7 +276,7 @@ DEVICES = [{
     ]
 }, {
     'lumi.sen_ill.mgl01': ["Xiaomi", "Light Sensor", "GZCGQ01LM"],
-    'params': [
+    'mi_spec': [
         ['2.1', '2.1', 'illuminance', 'sensor'],
         ['3.1', '3.1', 'battery', 'sensor'],
     ]
@@ -272,7 +292,6 @@ DEVICES = [{
     'params': [
         ['0.1.85', 'density', 'gas density', 'sensor'],
         ['13.1.85', 'alarm', 'gas', 'binary_sensor'],
-        ['8.0.2001', 'battery', 'battery', 'sensor'],
     ]
 }, {
     'lumi.curtain': ["Aqara", "Curtain", "ZNCLDJ11LM"],
@@ -292,17 +311,37 @@ DEVICES = [{
         ['14.4.85', 'run_state', 'run_state', None],
         ['8.0.2001', 'battery', 'battery', 'sensor'],
     ]
-}, {  # OTHER MANUFACTURERS
-    'TRADFRI bulb E27 W opal 1000lm': ["IKEA", "Bulb E27"],
-    'LWB010': ["Philips", "Hue Bulb E27"],
-    'FNB56-ZSC01LX1.2': ["Ali", "Dimmer"],
+}, {
+    'lumi.lock.aq1': ["Aqara", "Door Lock S1", "ZNMS11LM"],
+    'lumi.lock.acn02': ["Aqara", "Door Lock S2", "ZNMS12LM"],
     'params': [
-        [None, None, 'light', 'light'],
+        ['13.1.85', None, 'key_id', 'sensor'],
+        ['13.20.85', 'lock_state', 'lock', 'binary_sensor'],
+        ['8.0.2001', 'battery', 'battery', 'sensor'],
     ]
 }, {
-    'MS01': ["Sonoff", "Motion Sensor"],
+    # https://github.com/AlexxIT/XiaomiGateway3/issues/101
+    'lumi.airrtc.tcpecn02': ["Aqara", "Thermostat S2", "KTWKQ03ES"],
     'params': [
-        [None, None, 'motion', 'binary_sensor'],
+        ['3.1.85', None, 'power', None],
+        ['3.2.85', None, 'current_temperature', None],
+        ['14.2.85', None, 'climate', 'climate'],
+        ['14.8.85', None, 'mode', None],
+        ['14.9.85', None, 'target_temperature', None],
+        ['14.10.85', None, 'fan_mode', None],
+    ]
+}, {
+    'lumi.airrtc.vrfegl01': ["Xiaomi", "VRF Air Conditioning"],
+    'params': [
+        ['13.1.85', None, 'channels', 'sensor']
+    ]
+}, {
+    # without N
+    'lumi.switch.l0agl1': ["Aqara", "Relay T1", "DLKZMK12LM"],
+    # with N
+    'lumi.switch.n0agl1': ["Aqara", "Relay T1", "SSM-U01"],
+    'mi_spec': [
+        ['2.1', '2.1', 'switch', 'switch'],
     ]
 }]
 
@@ -318,7 +357,6 @@ GLOBAL_PROP = {
     '8.0.2009': 'pv_state',
     '8.0.2010': 'cur_state',
     '8.0.2011': 'pre_state',
-    '8.0.2012': 'power_tx',
     '8.0.2013': 'CCA',
     '8.0.2014': 'protect',
     '8.0.2015': 'power',
@@ -353,7 +391,8 @@ def get_device(zigbee_model: str) -> Optional[dict]:
                 'device_name': desc[0] + ' ' + desc[1],
                 'device_model': zigbee_model + ' ' + desc[2]
                 if len(desc) > 2 else zigbee_model,
-                'params': device['params']
+                'params': device.get('params'),
+                'mi_spec': device.get('mi_spec')
             }
 
     return None
@@ -374,6 +413,60 @@ def fix_xiaomi_props(params) -> dict:
                          'hinder_stop'].index(v)
 
     return params
+
+
+def remove_device(hass: HomeAssistantType, did: str):
+    """Remove device by did from Hass"""
+    assert did.startswith('lumi.'), did
+    # lumi.1234567890 => 0x1234567890
+    mac = '0x' + did[5:]
+    registry: DeviceRegistry = hass.data['device_registry']
+    device = registry.async_get_device({('xiaomi_gateway3', mac)}, None)
+    if device:
+        registry.async_remove_device(device.id)
+
+
+def migrate_unique_id(hass: HomeAssistantType):
+    """New unique_id format: `mac_attr`, no leading `0x`, spaces and uppercase.
+    """
+    old_id = re.compile('(^0x|[ A-F])')
+
+    registry: EntityRegistry = hass.data['entity_registry']
+    for entity in registry.entities.values():
+        if entity.platform != DOMAIN or not old_id.search(entity.unique_id):
+            continue
+
+        uid = entity.unique_id.replace('0x', '').replace(' ', '_').lower()
+        registry.async_update_entity(entity.entity_id, new_unique_id=uid)
+
+
+# new miio adds colors to logs
+RE_JSON1 = re.compile(b'msg:(.+) length:(\d+) bytes')
+RE_JSON2 = re.compile(b'{.+}')
+
+
+def extract_jsons(raw) -> List[bytes]:
+    """There can be multiple concatenated json on one line. And sometimes the
+    length does not match the message."""
+    m = RE_JSON1.search(raw)
+    if m:
+        length = int(m[2])
+        raw = m[1][:length]
+    else:
+        m = RE_JSON2.search(raw)
+        raw = m[0]
+    return raw.replace(b'}{', b'}\n{').split(b'\n')
+
+
+def get_buttons(model: str):
+    model, _ = model.split(' ', 1)
+    for device in DEVICES:
+        if model in device:
+            return [
+                param[2] for param in device['params']
+                if param[2].startswith('button')
+            ]
+    return None
 
 
 TITLE = "Xiaomi Gateway 3 Debug"
@@ -405,17 +498,25 @@ class XiaomiGateway3Debug(logging.Handler, HomeAssistantView):
         self.text += f"{dt}  {rec.levelname:7}  {module:12}  {rec.msg}\n"
 
     async def get(self, request: web.Request):
-        reload = request.query.get('r', '')
+        try:
+            if 'q' in request.query or 't' in request.query:
+                lines = self.text.split('\n')
 
-        if 'q' in request.query:
-            try:
-                reg = re.compile(fr"({request.query['q']})", re.IGNORECASE)
-                body = '\n'.join([p for p in self.text.split('\n')
-                                  if reg.search(p)])
-            except:
-                return web.Response(status=500)
-        else:
-            body = self.text
+                if 'q' in request.query:
+                    reg = re.compile(fr"({request.query['q']})", re.IGNORECASE)
+                    lines = [p for p in lines if reg.search(p)]
 
-        return web.Response(text=HTML % (reload, body),
-                            content_type="text/html")
+                if 't' in request.query:
+                    tail = int(request.query['t'])
+                    lines = lines[-tail:]
+
+                body = '\n'.join(lines)
+            else:
+                body = self.text
+
+            reload = request.query.get('r', '')
+            return web.Response(text=HTML % (reload, body),
+                                content_type="text/html")
+
+        except:
+            return web.Response(status=500)

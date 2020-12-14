@@ -23,6 +23,7 @@ DOMAIN = 'yandex_station'
 CONF_TTS_NAME = 'tts_service_name'
 CONF_INTENTS = 'intents'
 CONF_DEBUG = 'debug'
+CONF_RECOGNITION_LANG = 'recognition_lang'
 
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema({
@@ -38,9 +39,20 @@ CONFIG_SCHEMA = vol.Schema({
                 vol.Optional(CONF_PORT, default=1961): cv.port,
             }, extra=vol.ALLOW_EXTRA),
         },
+        vol.Optional(CONF_RECOGNITION_LANG): cv.string,
         vol.Optional(CONF_DEBUG, default=False): cv.boolean,
     }, extra=vol.ALLOW_EXTRA),
 }, extra=vol.ALLOW_EXTRA)
+
+YANDEX_DEVICES = {
+    'devices.types.thermostat.ac': 'climate',
+    'devices.types.thermostat': 'climate',
+    'devices.types.media_device.tv': 'media_player',
+    'devices.types.light': 'light',
+    'devices.types.other': 'remote',
+    'devices.types.socket': 'switch',
+    'devices.types.switch': 'switch',
+}
 
 
 async def async_setup(hass: HomeAssistantType, hass_config: dict):
@@ -49,6 +61,11 @@ async def async_setup(hass: HomeAssistantType, hass_config: dict):
     # init debug if needed
     if config[CONF_DEBUG]:
         utils.YandexDebug(hass, _LOGGER)
+
+    lang = config.get(CONF_RECOGNITION_LANG)
+    if lang:
+        # utils.fix_recognition_lang(hass, 'frontend_es5', lang)
+        utils.fix_recognition_lang(hass, 'frontend_latest', lang)
 
     cachefile = hass.config.path(f".{DOMAIN}.json")
 
@@ -170,18 +187,18 @@ async def async_setup(hass: HomeAssistantType, hass_config: dict):
                     except:
                         pass
 
-        # создаём устройства умного дома Яндекса (пока только кондеи)
+        # создаём устройства умного дома Яндекса
         if CONF_INCLUDE in config:
             for device in quasar.devices:
                 if device['name'] not in config[CONF_INCLUDE]:
                     continue
 
-                if device['type'] == 'devices.types.thermostat.ac':
-                    component = 'climate'
-                elif device['type'] == 'devices.types.other':
-                    component = 'remote'
-                else:
-                    _LOGGER.error(f"{device['name']} не поддерживается")
+                component = YANDEX_DEVICES.get(device['type'])
+                if not component:
+                    dump = await quasar.get_device(device['id'])
+                    dump = utils.dump_capabilities(dump)
+                    _LOGGER.warning(
+                        f"{device['name']} не поддерживается: {dump}")
                     continue
 
                 hass.async_create_task(discovery.async_load_platform(

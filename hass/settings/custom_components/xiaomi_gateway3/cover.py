@@ -5,7 +5,7 @@ from homeassistant.components.cover import CoverEntity, ATTR_POSITION, \
 from homeassistant.const import STATE_CLOSING, STATE_OPENING
 
 from . import DOMAIN, Gateway3Device
-from .gateway3 import Gateway3
+from .core.gateway3 import Gateway3
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -44,7 +44,7 @@ class Gateway3Cover(Gateway3Device, CoverEntity):
         if 'position' in data:
             self._attrs[ATTR_CURRENT_POSITION] = data['position']
 
-        self.schedule_update_ha_state()
+        self.async_write_ha_state()
 
     def open_cover(self, **kwargs):
         self.gw.send(self.device, {'motor': 1})

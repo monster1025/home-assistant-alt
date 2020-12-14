@@ -7,11 +7,11 @@ yandex_smart_home:
       - vacuum
       - cover
       - fan
-    include_entities:
-      - input_boolean.alice_night_mode
-      - input_boolean.alice_turn_off_light
-      - input_boolean.alice_away_mode
-      - input_boolean.find_phone_danil
+    # include_entities:
+    #   - input_boolean.alice_night_mode
+    #   - input_boolean.alice_turn_off_light
+    #   - input_boolean.alice_away_mode
+    #   - input_boolean.find_phone_danil
 
     exclude_entities:
       - switch.plug_158d00020f3a29
@@ -35,12 +35,12 @@ yandex_smart_home:
     # input_boolean.find_phone_danil:
     #   name: "Найти телефон Данила"
     #   room: "Сценарии"
-    input_boolean.alice_away_mode:
-      name: "Я ушёл"
-      room: "Сценарии"
-    input_boolean.alice_night_mode:
-      name: "Спокойной ночи"
-      room: "Сценарии"
+    # input_boolean.alice_away_mode:
+    #   name: "Я ушёл"
+    #   room: "Сценарии"
+    # input_boolean.alice_night_mode:
+    #   name: "Спокойной ночи"
+    #   room: "Сценарии"
     # input_boolean.alice_turn_off_light:
     #   name: "Выключи свет"
     #   room: "Сценарии"

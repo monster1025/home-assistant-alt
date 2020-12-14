@@ -33,7 +33,7 @@ services:
       - "4321:4321/udp"
       - "51827:51827" #Homekit
     devices:
-      - "/dev/ttyUSB2:/dev/ttyUSB2"
+      - "/dev/ttyUSB1:/dev/ttyUSB1"
      # - "/dev/ttyACM0:/dev/ttyACM0"
     depends_on:
      - mosquitto

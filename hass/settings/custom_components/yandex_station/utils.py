@@ -5,7 +5,8 @@ import uuid
 from datetime import datetime
 from logging import Logger
 
-from aiohttp import web
+from aiohttp import web, ClientSession
+from homeassistant.components import frontend
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.helpers.typing import HomeAssistantType
 
@@ -166,19 +167,13 @@ async def get_media_payload(text: str, session):
                 return play_video_by_descriptor('kinopoisk', m[1])
 
             elif k == 'music.yandex.playlist':
-                try:
-                    r = await session.get(
-                        'https://music.yandex.ru/handlers/library.jsx',
-                        params={'owner': m[1]})
-                    resp = await r.json()
+                uid = await get_userid_v2(session, m[1])
+                if uid:
                     return {
                         'command': 'playMusic',
                         'type': 'playlist',
-                        'id': f"{resp['owner']['uid']}:{m[2]}",
+                        'id': f"{uid}:{m[2]}",
                     }
-
-                except:
-                    return None
 
             elif k == 'music.yandex':
                 return {
@@ -209,3 +204,125 @@ async def get_zeroconf_singleton(hass: HomeAssistantType):
     except:
         from zeroconf import Zeroconf
         return Zeroconf()
+
+
+RE_ID3 = re.compile(br'(Text|TIT2)(....)\x00\x00\x03(.+?)\x00',
+                    flags=re.DOTALL)
+
+
+async def get_tts_message(session: ClientSession, url: str):
+    """Текст сообщения записывается в файл в виде ID3-тегов. Нужно скачать файл
+    и прочитать этот тег. В старых версиях ХА валидный ID3-тег, а в новых -
+    битый.
+    """
+    try:
+        r = await session.get(url)
+        data = await r.read()
+
+        m = RE_ID3.findall(data)
+        if len(m) == 1 and m[0][0] == b'TIT2':
+            # old Hass version has valid ID3 tags with `TIT2` for Title
+            _LOGGER.debug(f"Получение TTS из ID3")
+            m = m[0]
+        elif len(m) == 3 and m[2][0] == b'Text':
+            # latest Hass version has bug with `Text` for all tags
+            # there are 3 tags and the last one we need
+            _LOGGER.debug(f"Получение TTS из битого ID3")
+            m = m[2]
+        else:
+            _LOGGER.debug(f"Невозможно получить TTS: {data}")
+            return None
+
+        # check tag value length
+        if int.from_bytes(m[1], 'big') - 2 == len(m[2]):
+            return m[2].decode('utf-8')
+
+    except:
+        _LOGGER.exception("Ошибка получения сообщения TTS")
+
+    return None
+
+
+def fix_recognition_lang(hass: HomeAssistantType, folder: str, lng: str):
+    path = frontend._frontend_root(None).joinpath(folder)
+    for child in path.iterdir():
+        # find all chunc.xxxx.js files
+        if child.suffix != '.js' and 'chunk.' not in child.name:
+            continue
+
+        with open(child, 'rb') as f:
+            raw = f.read()
+
+        # find chunk file with recognition code
+        if b'this.recognition.lang=' not in raw:
+            continue
+
+        raw = raw.replace(b'en-US', lng.encode())
+
+        async def recognition_lang(request):
+            _LOGGER.debug("Send fixed recognition lang to client")
+            return web.Response(body=raw,
+                                content_type='application/javascript')
+
+        hass.http.app.router.add_get('/frontend_latest/' + child.name,
+                                     recognition_lang)
+
+        resource = hass.http.app.router._resources.pop()
+        hass.http.app.router._resources.insert(40, resource)
+
+        _LOGGER.debug(f"Fix recognition lang in {folder} to {lng}")
+
+        return
+
+
+RE_CLOUD_TEXT = re.compile(r'(<.+?>|[^А-Яа-яЁёA-Za-z0-9-,!.:=? ]+)')
+RE_CLOUD_SPACE = re.compile(r'  +')
+
+
+def fix_cloud_text(text: str) -> str:
+    """В облачном тексте есть ограничения:
+    1. Команда Алисе может содержать только кириллицу, латиницу, цифры и
+    спецсимволы: "-,!.:=?".
+    2. Команда Алисе должна быть не длиннее 100 символов
+    3. Нельзя использовать 2 пробела подряд (PS: что с ними не так?!)
+    """
+    text = text.strip()
+    text = RE_CLOUD_TEXT.sub('', text)
+    text = RE_CLOUD_SPACE.sub(' ', text)
+    return text[:100]
+
+
+# https://music.yandex.ru/users/alexey.khit/playlists
+async def get_userid_v1(session: ClientSession, username: str,
+                        playlist_id: str):
+    try:
+        payload = {
+            'owner': username, 'kinds': playlist_id, 'light': 'true',
+            'withLikesCount': 'false', 'lang': 'ru',
+            'external-domain': 'music.yandex.ru',
+            'overembed': 'false'
+        }
+        r = await session.get(
+            'https://music.yandex.ru/handlers/playlist.jsx',
+            params=payload)
+        resp = await r.json()
+        return resp['playlist']['owner']['uid']
+    except:
+        return None
+
+
+async def get_userid_v2(session: ClientSession, username: str):
+    try:
+        r = await session.get(
+            f"https://music.yandex.ru/users/{username}/playlists")
+        resp = await r.text()
+        return re.search(r'"uid":"(\d+)",', resp)[1]
+    except:
+        return None
+
+
+def dump_capabilities(data: dict) -> dict:
+    for k in ('id', 'request_id', 'updates_url', 'external_id'):
+        if k in data:
+            data.pop(k)
+    return data

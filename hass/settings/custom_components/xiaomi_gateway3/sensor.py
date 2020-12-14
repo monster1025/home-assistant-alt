@@ -4,11 +4,12 @@ import time
 from homeassistant.const import *
 
 from . import DOMAIN, Gateway3Device
-from .gateway3 import Gateway3
+from .core.gateway3 import Gateway3
 
 _LOGGER = logging.getLogger(__name__)
 
 UNITS = {
+    DEVICE_CLASS_BATTERY: '%',
     DEVICE_CLASS_HUMIDITY: '%',
     DEVICE_CLASS_ILLUMINANCE: 'lx',  # zb light and motion and ble flower - lux
     DEVICE_CLASS_POWER: POWER_WATT,
@@ -62,7 +63,7 @@ class Gateway3Sensor(Gateway3Device):
     def update(self, data: dict = None):
         if self._attr in data:
             self._state = data[self._attr]
-        self.schedule_update_ha_state()
+        self.async_write_ha_state()
 
 
 # https://github.com/Koenkk/zigbee-herdsman-converters/blob/master/converters/fromZigbee.js#L4738
@@ -100,10 +101,6 @@ class Gateway3Action(Gateway3Device):
         return self._state
 
     @property
-    def state_attributes(self):
-        return self._attrs
-
-    @property
     def icon(self):
         return 'mdi:bell'
 
@@ -112,7 +109,7 @@ class Gateway3Action(Gateway3Device):
             if k == 'button':
                 data[self._attr] = BUTTON[v]
                 break
-            elif k == 'button_both':
+            elif k.startswith('button_both'):
                 data[self._attr] = k + '_' + BUTTON_BOTH[v]
                 break
             elif k.startswith('button'):
@@ -131,8 +128,13 @@ class Gateway3Action(Gateway3Device):
             self._state = data[self._attr]
             self.async_write_ha_state()
 
+            # repeat event from Aqara integration
+            self.hass.bus.async_fire('xiaomi_aqara.click', {
+                'entity_id': self.entity_id, 'click_type': self._state
+            })
+
             time.sleep(.1)
 
             self._state = ''
 
-        self.async_schedule_update_ha_state()
+        self.async_write_ha_state()
