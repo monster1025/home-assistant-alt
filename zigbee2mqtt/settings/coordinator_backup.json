@@ -1,6 +1,6 @@
 {
   "adapterType": "zStack",
-  "time": "Mon, 21 Dec 2020 16:48:22 GMT",
+  "time": "Wed, 13 Jan 2021 08:25:39 GMT",
   "meta": {
     "product": 1
   },
@@ -28,7 +28,7 @@
       "osal": true,
       "product": -1,
       "value": [
-        60,
+        107,
         5,
         2,
         51,
@@ -140,8 +140,8 @@
         0,
         0,
         0,
-        206,
-        102,
+        255,
+        37,
         0,
         0
       ],

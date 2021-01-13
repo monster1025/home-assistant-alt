@@ -1,6 +1,6 @@
 # Need to turn off logging because senseair uses uart and have conflicts with logging
 logger:
-  baud_rate: 0
+#  baud_rate: 0
 
 esphome:
   name: senseair
@@ -45,7 +45,7 @@ sensor:
   - platform: homeassistant
     id: co2_mainroom_bed
     entity_id: sensor.co2_mainroom_bed_co2
-    
+
   - platform: homeassistant
     id: temperature_outside
     entity_id: sensor.temperature_outside
@@ -71,7 +71,7 @@ display:
       it.printf(22, 27, id(open_sans_10), TextAlign::TOP_LEFT , "2");
 
       int value = 0;
-      if (id(co2_mainroom_bed).has_state()) {
+      if (id(co2_mainroom_bed).has_state() && !isnan(id(co2_mainroom_bed).state)) {
         it.printf(35, 18, id(open_sans_18), TextAlign::TOP_LEFT , "%.0f", id(co2_mainroom_bed).state);
         
         value = (id(co2_mainroom_bed).state*100/2500)*128/100;
