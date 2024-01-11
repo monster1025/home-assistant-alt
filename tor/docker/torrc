@@ -1,0 +1,34 @@
+## The directory for keeping all the keys/etc
+DataDirectory /var/lib/tor
+
+UseBridges 1
+Bridge 173.71.186.182:9001 A122240F80A5D3A78082FB75896D57DBAA0EE27F
+Bridge 141.95.17.236:9333 6E896C8EEDD2E163A540179CF9F242F5DBE11FE4
+
+#Bridge 64.227.79.188:6666 E152B4A1489C45CB1A56648D39FABF57C80B73D1
+#Bridge 83.236.208.78:9001 B7837234BF2B3C5142659AE960F32077CD30F198
+
+## Tor opens a socks proxy on port 9150
+SocksPort 0.0.0.0:9150
+
+## Entry policies to allow/deny SOCKS requests based on IP address.
+## SocksPolicy accept 192.168.1.0/24
+SocksPolicy accept *
+
+## Logs go to stdout at level "notice"
+Log notice stdout
+
+ControlPort 0.0.0.0:9051
+# tor --hash-password myPwD
+HashedControlPassword 16:B1EC8A12CA8300DF606E7B4D315EC4EDB4E55B33A25C95A2FA457EB0A9
+
+# Try for at most NUM seconds when building circuits. If the circuit isn't open in that time, give up on it. (Default: 1 minute.)           
+CircuitBuildTimeout 5
+
+# Send a padding cell every N seconds to keep firewalls from closing our connections while Tor is not in use.                               
+KeepalivePeriod 60                                                                                                                          
+# Force Tor to consider whether to build a new circuit every NUM seconds.                                                                   
+NewCircuitPeriod 15                                                                                                                       
+# How many entry guards should we keep at a time?                                                                                           
+NumEntryGuards 8  
+

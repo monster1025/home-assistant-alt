@@ -1,0 +1,6 @@
+mqtt:
+  sensor:
+    - name: "cube"
+      state_topic: "ZigbeeBD0C/cube"
+      value_template: "{{ value_json.side }}"
+      json_attributes_topic: "ZigbeeBD0C/cube"

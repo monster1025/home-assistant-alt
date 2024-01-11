@@ -1,0 +1,17 @@
+report_entities:
+  module: groups
+  class: Groups
+  friendly_name: Контроль при приходе-уходе
+  entities: # list of entities                                                           
+    - light.yeelight_color1_286c071065c7
+    - light.yeelight_color1_34ce008fe328
+    - light.yeelight_mono1_34ce0087ff33
+    - light.yeelight_mono1_f0b4290e5444
+    - light.yeelight_mono1_f0b429a8f6df
+    - light.yeelight_mono1_286c07f12bed
+    - light.yeelight_mono1_f0b429a8d936
+    - switch.light_bath
+    - switch.light_kitchen
+    - switch.plug_light_hall
+  # device_type: light
+  # entity_part: "_"

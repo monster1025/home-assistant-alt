@@ -1,0 +1,13 @@
+#################################
+#  SENSOR BATTERY LOW REMINDER  #
+#################################
+sensor_flower_moisture_low_report:
+  class: Flower
+  module: flower
+  constraint: input_boolean.flower_report
+  alice: media_player.yandex_station
+  always_send: 0
+  threshold: 60
+  notify: telegram
+  global_dependencies:
+    - globals

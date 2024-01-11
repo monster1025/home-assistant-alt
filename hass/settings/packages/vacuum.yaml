@@ -1,0 +1,10 @@
+vacuum:
+  - platform: xiaomi_miio
+    host: 192.168.1.229
+    token: 716d4d303339744e79434e566d457a39
+
+#mirobot_ip: 192.168.1.230
+#mirobot_key: 78714f6f376b3235464a386d5a4a626f
+
+# host: !secret mirobot_ip
+# token: !secret mirobot_key

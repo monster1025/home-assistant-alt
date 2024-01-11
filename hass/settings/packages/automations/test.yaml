@@ -1,0 +1,9 @@
+automation:
+  - alias: Respond to button click Test
+    trigger:
+      platform: state
+      entity_id: sensor.z2mtcp_button_action
+      to: 'single'
+    action:
+      entity_id: switch.z2m_light
+      service: switch.toggle

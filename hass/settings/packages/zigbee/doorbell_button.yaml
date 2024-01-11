@@ -1,0 +1,8 @@
+mqtt:
+  sensor:
+    - name: "doorbell_button"
+      state_topic: "ZigbeeBD0C/doorbell_button"
+      icon: "mdi:toggle-switch"
+      value_template: "{{ value_json.action }}"
+      json_attributes_topic: "ZigbeeBD0C/doorbell_button"
+

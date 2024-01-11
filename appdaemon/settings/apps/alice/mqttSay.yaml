@@ -1,0 +1,7 @@
+mqttSay:
+  module: mqttSay
+  class: MqttSay
+  global_dependencies:
+    - globals
+  alice: media_player.yandex_station
+  topic: "home/yandexStation/say"

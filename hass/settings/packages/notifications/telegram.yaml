@@ -1,0 +1,27 @@
+telegram_bot:
+  - platform: polling
+    api_key: !secret telegram_key
+    allowed_chat_ids:
+      - !secret telegram_group_chat
+      - !secret telegram_monster_chat
+      - !secret telegram_sveta_chat
+      - !secret telegram_card_chat
+    #proxy_url: !secret proxy_url
+
+notify:
+  - platform: telegram
+    name: telegram
+    chat_id: !secret telegram_group_chat
+    parse_mode: html
+  - platform: telegram
+    name: telegram_monster
+    chat_id: !secret telegram_monster_chat
+    parse_mode: html
+  - platform: telegram
+    name: telegram_sveta
+    chat_id: !secret telegram_sveta_chat
+    parse_mode: html
+  - platform: telegram
+    name: telegram_card_chat
+    chat_id: !secret telegram_card_chat
+    parse_mode: html

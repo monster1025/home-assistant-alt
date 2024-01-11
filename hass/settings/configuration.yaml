@@ -1,0 +1,46 @@
+homeassistant:
+  name: Home
+  latitude: !secret home_latitude
+  longitude: !secret home_longitude
+  elevation: 124
+  unit_system: metric
+  time_zone: !secret timezone
+  packages: !include_dir_named packages
+
+logger:
+  default: info
+  logs:
+    custom_components.yandex_smart_home: debug
+    icloud: debug
+
+api:
+
+http:
+  base_url: !secret base_url
+  use_x_forwarded_for: true
+  ip_ban_enabled: true
+  login_attempts_threshold: 5
+  trusted_proxies:
+    - 172.19.0.0/24
+    - 172.18.0.0/24
+
+mobile_app:
+
+# Enables the frontend
+frontend:
+lovelace:
+  mode: yaml
+    
+# Enables configuration UI
+config:
+discovery:
+system_health:
+my:
+
+# # Enables support for tracking state changes over time
+history:
+logbook:
+
+home_connect_alt:
+  client_id: 1F4C88E5BCEF91574CA74AE15A330C64C81C43196F98482F7FEBF03F6073C86A
+  client_secret: 7C9EFEFB6A4492EABAFA2B25D9378376A1AF397B830E78133F1DCB2D602BC8BA

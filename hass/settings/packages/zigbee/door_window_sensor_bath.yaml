@@ -1,0 +1,14 @@
+mqtt:
+  binary_sensor:
+    - name: door_window_sensor_bath
+      state_topic: "ZigbeeBD0C/door_window_sensor_bath"
+      value_template: "{{ value_json.contact }}"
+      device_class: door
+      payload_on: false
+      payload_off: true
+      json_attributes_topic: "ZigbeeBD0C/door_window_sensor_bath"
+
+homeassistant:
+  customize:
+    binary_sensor.door_window_sensor_bath:
+      friendly_name: Дверь (Ванна)

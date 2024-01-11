@@ -1,0 +1,23 @@
+#################################
+#        HOME PRESENSE          #
+#################################
+entities_action:
+  module: entities_action
+  class: EntitiesByPresence
+  away_entities:
+    - light.yeelight_color1_286c071065c7
+    - light.yeelight_color1_34ce008fe328
+    - light.yeelight_mono1_34ce0087ff33
+    - light.yeelight_mono1_f0b4290e5444
+    - light.yeelight_mono1_f0b429a8f6df
+    - light.yeelight_mono1_286c07f12bed
+    - light.yeelight_mono1_f0b429a8d936
+    - light.lamp1
+    - switch.light_bath
+    - switch.light_kitchen
+    - switch.plug_light_hall
+  return_entities:
+    - switch.plug_light_hall
+    - light.yeelight_color1_34ce008fe328
+  global_dependencies:
+    - globals

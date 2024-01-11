@@ -1,0 +1,12 @@
+mqtt:
+  sensor:
+    - state_topic: "ZigbeeBD0C/co2_table"
+      name: mainroom_co2
+      unit_of_measurement: "ppm"
+      value_template: "{{ value_json.co2 }}"
+      json_attributes_topic: "ZigbeeBD0C/co2_table"
+
+homeassistant:
+  customize:
+    sensor.mainroom_co2:
+      friendly_name: CO2 Гостиная

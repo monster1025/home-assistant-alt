@@ -1,0 +1,15 @@
+mqtt:
+  binary_sensor:
+    - name: motion_sensor_kitchen2
+      state_topic: "ZigbeeBD0C/motion_sensor_kitchen2"
+      value_template: "{{ value_json.occupancy }}"
+      device_class: occupancy
+      off_delay: 10
+      payload_on: true
+      payload_off: false
+      json_attributes_topic: "ZigbeeBD0C/motion_sensor_kitchen2"
+
+homeassistant:
+  customize:
+    binary_sensor.motion_sensor_kitchen2:
+      friendly_name: Движение (Кухня2)

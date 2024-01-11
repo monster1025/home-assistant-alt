@@ -1,0 +1,111 @@
+modbus:
+  name: modbus_power
+  type: serial
+  method: rtu
+  port: /dev/ttyUSB0
+  baudrate: 9600
+  stopbits: 1
+  bytesize: 8
+  parity: N #N
+  sensors:
+    - name: power_total
+      unit_of_measurement: 'kWh'
+      slave: 1
+      address: 0
+      precision: 2
+      scale: 0.01
+      data_type: uint32
+
+    - name: power_voltage
+      slave: 1
+      address: 12
+      precision: 1
+      scale: 0.1
+      unit_of_measurement: 'V'
+    
+    - name: power_current
+      slave: 1
+      address: 13
+      precision: 2
+      scale: 0.01
+      unit_of_measurement: 'A'
+
+    - name: power_active_power
+      slave: 1
+      address: 14
+      precision: 3
+      scale: 0.001
+      unit_of_measurement: 'KW'
+
+    - name: power_reactive_power
+      slave: 1
+      address: 15
+      precision: 3
+      scale: 0.001
+      unit_of_measurement: 'Kvar'
+
+    - name: power_power_factor
+      slave: 1
+      address: 16
+      precision: 3
+      scale: 0.001
+      unit_of_measurement: '%'
+
+    - name: power_frequency
+      slave: 1
+      address: 17
+      precision: 2
+      scale: 0.01
+      unit_of_measurement: 'Hz'
+
+sensor:
+  - platform: template
+    sensors:
+      power_main_total:
+        unit_of_measurement: 'kWh'
+        value_template: "{{ states('sensor.power_total') | float - 7072.7 | round(2) }}"
+        #7072.7 - разница показаний.
+
+homeassistant:
+  customize:
+    sensor.power_main_total:
+      friendly_name: Общий счётчик
+
+    sensor.power_total:
+      friendly_name: Потреблено итого
+
+    sensor.power_voltage_a:
+      friendly_name: Напряжение A
+
+    sensor.power_voltage_b:
+      friendly_name: Напряжение B
+
+    sensor.power_voltage_c:
+      friendly_name: Напряжение C
+
+    sensor.power_current_a:
+      friendly_name: Ток A
+
+    sensor.power_current_b:
+      friendly_name: Ток B
+
+    sensor.power_current_c:
+      friendly_name: Ток C
+
+    sensor.power_frequency:
+      friendly_name: Частота
+
+    sensor.power_active_power:
+      friendly_name: Активная нагрузка
+
+    sensor.power_reactive_power:
+      friendly_name: Реактивная нагрузка
+
+    sensor.power_power_factor:
+      friendly_name: Коэффициент мощности
+
+    sensor.power_export:
+      friendly_name: Экспортировано
+
+    sensor.power_import:
+      friendly_name: Импортировано

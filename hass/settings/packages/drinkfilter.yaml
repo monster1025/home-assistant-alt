@@ -1,0 +1,72 @@
+utility_meter: 
+  raw_water_yearly: # Годовое потребление сырой воды
+    source: sensor.raw_water_drink_filter
+    cycle: yearly
+    tariffs:
+      - single
+  drink_water_yearly: # Годовое потребление питьевой воды
+    source: sensor.drink_water_drink_filter
+    cycle: yearly
+    tariffs:
+      - single  
+  raw_water_monthly: # Месячное потребление сырой воды
+    source: sensor.raw_water_drink_filter
+    cycle: monthly
+    tariffs:
+      - single  
+  drink_water_monthly: # Месячное потребление питьевой воды
+    source: sensor.drink_water_drink_filter
+    cycle: monthly
+    tariffs:
+      - single  
+  raw_water_daily: # Дневное потребление сырой воды
+    source: sensor.raw_water_drink_filter
+    cycle: daily
+    tariffs:
+      - single  
+  drink_water_daily: # Дневное потребление питьевой воды
+    source: sensor.drink_water_drink_filter
+    cycle: daily
+    tariffs:
+      - single  
+
+sensor: 
+  - platform: template
+    sensors:
+      raw_water_yesterday: # Расход сырой воды (вчера)
+        friendly_name: Расход сырой воды (вчера)
+        icon_template: mdi:gauge
+        unit_of_measurement: 'л'
+        value_template: "{{ state_attr('sensor.raw_water_daily_single', 'last_period') | float }}"      
+      drink_water_yesterday: # Расход питьевой воды (вчера)
+        friendly_name: Расход питьевой воды (вчера)
+        icon_template: mdi:gauge
+        unit_of_measurement: 'л'
+        value_template: "{{ state_attr('sensor.drink_water_daily_single', 'last_period') | float }}"
+
+homeassistant:
+  customize:
+    sensor.raw_water_yearly_single:
+      friendly_name: Расход сырой воды (год)
+      unit_of_measurement: л
+      icon: mdi:chart-histogram
+    sensor.drink_water_yearly_single:
+      friendly_name: Расход питьевой воды (год)
+      unit_of_measurement: л         
+      icon: mdi:chart-histogram
+    sensor.raw_water_monthly_single:
+      friendly_name: Расход сырой воды (этот месяц)
+      unit_of_measurement: л
+      icon: mdi:counter
+    sensor.drink_water_monthly_single:
+      friendly_name: Расход питьевой воды (этот месяц)
+      unit_of_measurement: л         
+      icon: mdi:counter
+    sensor.raw_water_daily_single:
+      friendly_name: Расход сырой воды (сегодня)
+      unit_of_measurement: л
+      icon: mdi:gauge
+    sensor.drink_water_daily_single:
+      friendly_name: Расход питьевой воды (сегодня)
+      unit_of_measurement: л         
+      icon: mdi:gauge        

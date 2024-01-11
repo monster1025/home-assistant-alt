@@ -1,0 +1,131 @@
+- id: '1606065844556'
+  alias: New Automation
+  description: ''
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: 313bedaded5359768194cb385454fa12
+    type: action
+    subtype: button_1_single
+    discovery_id: 0x00124b001f835180 action_button_1_single
+  condition: []
+  action:
+  - type: toggle
+    device_id: 3c506f1e2cce50e12b6cbe9aa32769b3
+    entity_id: switch.0x00158d00020f3a29_switch
+    domain: switch
+  mode: single
+- id: '1606065870254'
+  alias: New Automation
+  description: ''
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: 313bedaded5359768194cb385454fa12
+    type: action
+    subtype: button_1_single
+    discovery_id: 0x00124b001f835180 action_button_1_single
+  condition: []
+  action:
+  - type: toggle
+    device_id: 3c506f1e2cce50e12b6cbe9aa32769b3
+    entity_id: switch.0x00158d00020f3a29_switch
+    domain: switch
+  mode: single
+- id: '1652987572136'
+  alias: Test_z2m_tcp
+  description: ''
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: 7175406f0df38fcc9c6c3a80d7a5b408
+    type: action
+    subtype: single
+    discovery_id: 0x00158d000373d5ad action_single
+  condition: []
+  action:
+  - type: toggle
+    device_id: f1d92728626dad97fe3c4361b8c6b848
+    entity_id: switch.z2m_light
+    domain: switch
+  mode: single
+- id: '1652987617301'
+  alias: TestZ2MTcp
+  description: Привет
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: 7175406f0df38fcc9c6c3a80d7a5b408
+    type: action
+    subtype: single
+    discovery_id: 0x00158d000373d5ad action_single
+  condition: []
+  action:
+  - type: toggle
+    device_id: f1d92728626dad97fe3c4361b8c6b848
+    entity_id: switch.z2m_light
+    domain: switch
+  mode: single
+- id: '1652987881821'
+  alias: New Automation
+  description: ''
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: 7175406f0df38fcc9c6c3a80d7a5b408
+    type: action
+    subtype: single
+    discovery_id: 0x00158d000373d5ad action_single
+  condition: []
+  action:
+  - type: toggle
+    device_id: f1d92728626dad97fe3c4361b8c6b848
+    entity_id: switch.z2m_light
+    domain: switch
+  mode: single
+- id: '1652988466792'
+  alias: New Automation
+  description: ''
+  trigger:
+  - platform: device
+    domain: mqtt
+    device_id: 7175406f0df38fcc9c6c3a80d7a5b408
+    type: action
+    subtype: single
+    discovery_id: 0x00158d000373d5ad action_single
+  condition: []
+  action:
+  - type: toggle
+    device_id: f1d92728626dad97fe3c4361b8c6b848
+    entity_id: switch.z2m_light
+    domain: switch
+  mode: single
+- id: '1669579519642'
+  alias: New Automation222222
+  description: ''
+  trigger:
+  - platform: device
+    type: changed_states
+    device_id: 151cd6eb3b45340baa2e3ef234ebe3e9
+    entity_id: light.fnvdoorbell_indicator_light
+    domain: light
+  condition: []
+  action:
+  - service: alarm_control_panel.alarm_arm_away
+    data: {}
+  mode: single
+- id: '1669579755275'
+  alias: SendTelegramOnCall
+  description: ''
+  trigger:
+  - platform: device
+    device_id: 151cd6eb3b45340baa2e3ef234ebe3e9
+    domain: select
+    entity_id: select.fnvdoorbell_record_mode
+    type: current_option_changed
+  condition: []
+  action:
+  - service: notify.telegram_monster
+    data:
+      message: test
+  mode: single

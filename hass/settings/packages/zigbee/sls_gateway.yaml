@@ -1,0 +1,37 @@
+mqtt:
+  sensor:
+    - name: "uptime_sls"
+      state_topic: "ZigbeeBD0C/bridge/config"
+      value_template: "{{ value_json.Uptime }}"
+
+    - name: "sls_state"
+      state_topic: "ZigbeeBD0C/bridge/state"
+      value_template: "{{ value }}"
+      json_attributes_topic: "ZigbeeBD0C/bridge/config"
+
+    - name: "sls_FreeMem"
+      state_topic: "ZigbeeBD0C/bridge/config"
+      value_template: "{{ (value_json.FreeMem | int) }}"
+      unit_of_measurement: 'b'
+    
+    - name: "sls_Uptime"
+      state_topic: "ZigbeeBD0C/bridge/config"
+      value_template: "{{ (value_json.Uptime | int) }}"
+      unit_of_measurement: 'sec'
+
+    - name: "sls_permit_join"
+      state_topic: "ZigbeeBD0C/bridge/config"
+      value_template: "{{ value_json.permit_join }}"
+
+  light:
+    - name: gateway
+      availability_topic: "ZigbeeBD0C/bridge/state"
+      command_topic: "ZigbeeBD0C/led"
+      rgb_command_topic: "ZigbeeBD0C/led"
+      rgb_command_template: >-
+        {
+          "mode": "manual",
+          "hex": "#{{ '%02x%02x%02x' | format(red, green, blue) }}"
+        }
+      on_command_type: "brightness"
+      payload_off: '{"mode": "auto"}'

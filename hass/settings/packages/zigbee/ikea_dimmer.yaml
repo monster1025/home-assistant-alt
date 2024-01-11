@@ -1,0 +1,6 @@
+mqtt:
+  sensor:
+    - name: "ikea_dimmer"
+      state_topic: "ZigbeeBD0C/ikea_dimmer"
+      value_template: "{{ value_json.level }}"
+      json_attributes_topic: "ZigbeeBD0C/ikea_dimmer"

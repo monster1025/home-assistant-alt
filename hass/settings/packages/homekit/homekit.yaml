@@ -1,0 +1,34 @@
+homekit:
+  auto_start: False
+  filter:
+    include_domains:
+      - alarm_control_panel
+      - light
+      - vacuum
+      - cover
+      - fan
+      - climate
+      - camera
+    include_entities:
+      - switch.light_bath
+      - switch.light_kitchen
+      - switch.plug_light_hall2
+    exclude_entities:
+      - light.gateway_light
+  entity_config:
+    switch.water_valve:
+      name: Подача воды
+    alarm_control_panel.ha_alarm:
+      name: Сигнализация
+    vacuum.xiaomi_vacuum_cleaner:
+      name: Пылесос
+
+
+automation:
+  - alias: 'Start HomeKit'
+    trigger:
+      - platform: homeassistant
+        event: start
+    action:
+      - delay: 00:01:00  # Wait 30 seconds
+      - service: homekit.start

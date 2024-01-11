@@ -1,0 +1,6 @@
+group:
+  kitchen_motion_sensors:
+    name: Kitchen
+    entities:
+      - binary_sensor.motion_sensor_kitchen
+      - binary_sensor.motion_sensor_kitchen2

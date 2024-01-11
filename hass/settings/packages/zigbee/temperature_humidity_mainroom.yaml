@@ -1,0 +1,21 @@
+mqtt:
+  sensor:
+    - state_topic: "ZigbeeBD0C/temperature_humidity_mainroom"
+      name: temperature_mainroom
+      unit_of_measurement: "°C"
+      device_class: "temperature"
+      value_template: "{{ value_json.temperature }}"
+      json_attributes_topic: "ZigbeeBD0C/temperature_humidity_mainroom"
+    - name: humidity_mainroom
+      state_topic: "ZigbeeBD0C/temperature_humidity_mainroom"
+      unit_of_measurement: "%"
+      device_class: "humidity"
+      value_template: "{{ value_json.humidity }}"
+      json_attributes_topic: "ZigbeeBD0C/temperature_humidity_mainroom"
+
+homeassistant:
+  customize:
+    sensor.temperature_outside:
+      friendly_name: Температура (гостиная)
+    sensor.humidity_outside:
+      friendly_name: Влажность (гостиная)

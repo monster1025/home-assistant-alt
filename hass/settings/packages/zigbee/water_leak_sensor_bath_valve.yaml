@@ -1,0 +1,14 @@
+mqtt:
+  binary_sensor:
+    - name: water_leak_sensor_bath_valve
+      state_topic: "ZigbeeBD0C/water_leak_sensor_bath_valve"
+      value_template: "{{ value_json.water_leak }}"
+      device_class: moisture
+      payload_on: true
+      payload_off: false
+      json_attributes_topic: "ZigbeeBD0C/water_leak_sensor_bath_valve"
+
+homeassistant:
+  customize:
+    binary_sensor.water_leak_sensor_bath_valve:
+      friendly_name: Ванна Раковина (протечка)

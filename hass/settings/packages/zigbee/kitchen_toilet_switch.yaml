@@ -1,0 +1,28 @@
+mqtt:
+  switch:
+    - name: light_bath
+      state_topic: "zigbee2mqtt/kitchen_toilet_switch"
+      payload_off: "OFF"
+      payload_on: "ON"
+      value_template: "{{ value_json.state_left }}"
+      command_topic: "zigbee2mqtt/kitchen_toilet_switch/set/state_left"
+    
+    - name: light_kitchen
+      state_topic: "zigbee2mqtt/kitchen_toilet_switch"
+      payload_off: "OFF"
+      payload_on: "ON"
+      value_template: "{{ value_json.state_right }}"
+      command_topic: "zigbee2mqtt/kitchen_toilet_switch/set/state_right"
+
+
+input_boolean:
+  bath_light_control:
+    name: Контроль света в ванной
+    initial: on
+
+homeassistant:
+  customize:
+    switch.light_bath:
+      friendly_name: Свет (Ванна)
+    switch.light_kitchen:
+      friendly_name: Свет (Кухня)

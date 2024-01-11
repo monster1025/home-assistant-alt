@@ -1,0 +1,8 @@
+mqtt:
+  light:
+    - name: "lamp1"
+      state_topic: "ZigbeeBD0C/lamp1"
+      brightness: true
+      schema: "json"
+      command_topic: "ZigbeeBD0C/lamp1/set"
+      brightness_scale: 254

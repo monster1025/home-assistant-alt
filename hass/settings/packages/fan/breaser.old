@@ -1,0 +1,26 @@
+fan:
+  - platform: xiaomi_airfresh
+    host: !secret breaser_ip
+    token: !secret breaser_token
+    name: AirFresh
+    model: dmaker.airfresh.a1
+
+input_boolean:
+  airfresh_ptc:
+    name: Бризер(подогрев)
+
+automation:
+  - alias: AirFreshPtcOn
+    trigger:
+      platform: state
+      entity_id: input_boolean.airfresh_ptc
+      to: 'on'
+    action:
+      service: fan.airfresh_set_ptc_on
+  - alias: AirFreshPtcOff
+    trigger:
+      platform: state
+      entity_id: input_boolean.airfresh_ptc
+      to: 'off'
+    action:
+      service: fan.airfresh_set_ptc_off

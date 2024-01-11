@@ -1,0 +1,107 @@
+sensor:
+  - platform: mqtt
+    name: "zmai_90_consumed_energy"
+    state_topic: "tele/zmai_90/SENSOR"
+    availability_topic: 'tele/zmai_90/LWT'
+    qos: 1
+    payload_available: 'Online'
+    payload_not_available: 'Offline'
+    value_template: "{{ (value_json.ENERGY.Total | float ) }}"
+    unit_of_measurement: 'kWh'
+    icon: mdi:circle-slice-3
+
+  - platform: mqtt
+    name: "zmai_90_consumed_yesturday"
+    state_topic: "tele/zmai_90/SENSOR"
+    availability_topic: 'tele/zmai_90/LWT'
+    qos: 1
+    payload_available: 'Online'
+    payload_not_available: 'Offline'
+    value_template: >- 
+      {{ (value_json.ENERGY.Yesterday | float ) }}
+    unit_of_measurement: 'kWh'
+    icon: mdi:circle-slice-3
+
+  - platform: mqtt
+    name: "zmai_90_consumed_today"
+    state_topic: "tele/zmai_90/SENSOR"
+    availability_topic: 'tele/zmai_90/LWT'
+    qos: 1
+    payload_available: 'Online'
+    payload_not_available: 'Offline'
+    value_template: >- 
+      {{ (value_json.ENERGY.Today | float ) }}
+    unit_of_measurement: 'kWh'
+    icon: mdi:circle-slice-3
+
+  - platform: mqtt
+    name: "zmai_90_voltage"
+    state_topic: "tele/zmai_90/SENSOR"
+    availability_topic: 'tele/zmai_90/LWT'
+    qos: 1
+    payload_available: 'Online'
+    payload_not_available: 'Offline'
+    value_template: >- 
+      {{ (value_json.ENERGY.Voltage | float ) }}
+    unit_of_measurement: 'V'
+    icon: mdi:flash-circle
+
+  - platform: mqtt
+    name: "zmai_90_current"
+    state_topic: "tele/zmai_90/SENSOR"
+    availability_topic: 'tele/zmai_90/LWT'
+    qos: 1
+    payload_available: 'Online'
+    payload_not_available: 'Offline'
+    value_template: >- 
+      {{ (value_json.ENERGY.Current | float ) }}
+    unit_of_measurement: 'A'
+    icon: mdi:flash-auto
+
+  - platform: mqtt
+    name: "zmai_90_active_power"
+    state_topic: "tele/zmai_90/SENSOR"
+    availability_topic: 'tele/zmai_90/LWT'
+    qos: 1
+    payload_available: 'Online'
+    payload_not_available: 'Offline'
+    value_template: >- 
+      {{ (value_json.ENERGY.Power | float ) }}
+    unit_of_measurement: 'W'    
+    icon: mdi:flash-outline
+
+  - platform: mqtt
+    name: "zmai_90_reactive_power"
+    state_topic: "tele/zmai_90/SENSOR"
+    availability_topic: 'tele/zmai_90/LWT'
+    qos: 1
+    payload_available: 'Online'
+    payload_not_available: 'Offline'
+    value_template: >- 
+      {{ (value_json.ENERGY.ReactivePower | float ) }}
+    unit_of_measurement: 'W'
+    icon: mdi:flash-outline
+
+  - platform: mqtt
+    name: "zmai_90_apparent_power"
+    state_topic: "tele/zmai_90/SENSOR"
+    availability_topic: 'tele/zmai_90/LWT'
+    qos: 1
+    payload_available: 'Online'
+    payload_not_available: 'Offline'
+    value_template: >- 
+      {{ (value_json.ENERGY.ApparentPower | float ) }}
+    unit_of_measurement: 'W'
+    icon: mdi:flash-outline
+
+  - platform: mqtt
+    name: "zmai_90_power_factor"
+    state_topic: "tele/zmai_90/SENSOR"
+    availability_topic: 'tele/zmai_90/LWT'
+    qos: 1
+    payload_available: 'Online'
+    payload_not_available: 'Offline'
+    value_template: >- 
+      {{ (value_json.ENERGY.Factor | float ) }}
+    unit_of_measurement: '%'
+    icon: mdi:percent-outline

@@ -1,0 +1,164 @@
+version: '3'
+services:
+  mosquitto:
+    build: ./mosquitto/docker
+    container_name: mosquitto
+    env_file: ./mosquitto/settings/mqtt.env
+    ports:
+      - "1883:1883"
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m 
+
+  hass:
+    image: homeassistant/home-assistant:latest
+    container_name: hass
+    volumes:
+      - ./hass/settings:/config
+      - ./secrets/hass-alt/settings/secrets.yaml:/config/secrets.yaml:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "8123:8123"
+      - "9898:9898/udp"
+      - "4321:4321/udp"
+      - "51827:51827" #Homekit
+    devices:
+      - "/dev/ttyUSB0:/dev/ttyUSB0"
+     # - "/dev/ttyACM0:/dev/ttyACM0"
+    depends_on:
+     - mosquitto
+     - tor
+    #network_mode: "host"
+    #privileged: true
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8123"]
+      interval: 30s
+      timeout: 10s
+      retries: 6
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m
+  
+  appdaemon:
+    build:
+      context: ./appdaemon/docker
+    container_name: appdaemon
+    depends_on:
+      - hass
+    volumes:
+      - ./appdaemon/settings:/conf
+      - ./secrets/hass-alt/settings/secrets.yaml:/conf/secrets.yaml:ro
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
+    links:
+      - "hass"
+    logging:
+      driver: json-file
+      options:
+          max-size: "10m"
+          max-file: "5"
+
+  esphome:
+    image: esphome/esphome #esphome-armv7
+    container_name: esphome
+    ports:
+      - "6052:6052"
+    volumes:
+      - ./esphome/settings:/config
+      - ./secrets/hass-alt/settings/secrets.yaml:/config/secrets.yaml:ro
+    network_mode: "host"
+    logging:
+      driver: json-file
+      options:
+          max-size: "10m"
+          max-file: "5"
+
+  zigbee2mqtt:
+    image: koenkk/zigbee2mqtt:latest-dev
+    container_name: zigbee2mqtt
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./zigbee2mqtt/settings:/app/data
+    devices:
+      - "/dev/ttyS2:/dev/ttyS2"
+    #devices:
+    #  - /dev/ttyUSB1:/dev/ttyUSB1
+    privileged: true
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m  
+
+  nginx:
+    image: nginx
+    hostname: nginx
+    container_name: nginx
+    links:
+      - "hass"
+    #  - "appdaemon"
+      - "certbot"
+    volumes:
+        - ./nginx/settings/site-confs:/etc/nginx/conf.d
+        - ./nginx/settings/www:/var/www
+        - ./certbot/settings/data:/config/keys
+    ports:
+        - "80:80"
+        - "443:443"
+    restart: always
+    logging:
+      driver: json-file
+      options:
+          max-size: "10m"
+          max-file: "5"
+
+  certbot:
+    build:
+      context: ./certbot/docker
+      dockerfile: Dockerfile #Dockerfile-rpi
+    restart: always
+    container_name: certbot
+    volumes:
+        - ./certbot/docker/update_certs.sh:/update_certs.sh:ro
+        - ./certbot/settings/data:/etc/letsencrypt
+        - /etc/localtime:/etc/localtime:ro
+    ports:
+        - "8081:80"
+    #entrypoint: certbot
+    #command: certonly --standalone --agree-tos --non-interactive --email admin@yandex5.ru -d sibur.yandex5.ru
+    logging:
+      driver: json-file
+      options:
+          max-size: "10m"
+          max-file: "5"
+
+  neptun2mqtt:
+    build:
+      context: ./neptun2mqtt/docker
+      dockerfile: Dockerfile
+    restart: always
+    container_name: neptun2mqtt
+    environment:
+      - MQTT_SERVER=192.168.1.6
+      - MQTT_USER=hass
+      - MQTT_PASS=mqttpass
+      # - NEPTUN_IP="192.168.1.147"
+    logging:
+      driver: json-file
+      options:
+          max-size: "10m"
+          max-file: "5"
+
+  tor:
+   build: 
+    context: ./tor/docker
+   container_name: tor
+   ports:
+      - "9150:9150"
+      - "9051:9051" #control port
+   restart: always

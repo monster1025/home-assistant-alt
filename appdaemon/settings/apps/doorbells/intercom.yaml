@@ -1,0 +1,12 @@
+#################################
+#           INTERCOM            #
+#################################
+intercom:
+  module: intercom
+  class: Intercom
+  sensor: sensor.zintercom_state
+  notify: telegram
+  timeout: 30
+  alice: media_player.yandex_station
+  global_dependencies:
+    - globals
